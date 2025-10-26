@@ -16,6 +16,7 @@ let nextId = 1;
 // ========== INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', function() {
     init();
+    checkAdminSession();
 });
 
 async function init() {
@@ -292,6 +293,107 @@ function renderCart() {
             Continue Shopping
         </button>
     `;
+}
+
+// ========== NOTIFICATION CONFIGURATION ==========
+// Telegram Bot Configuration
+const TELEGRAM_BOT_TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN_HERE';
+const TELEGRAM_CHAT_ID = 'YOUR_TELEGRAM_CHAT_ID_HERE';
+
+// EmailJS Configuration (Sign up at https://www.emailjs.com)
+const EMAILJS_SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';
+const EMAILJS_PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
+
+// Admin email address
+const ADMIN_EMAIL = 'your-email@toykoo.in';
+
+// ========== ADMIN AUTHENTICATION ==========
+// ⚠️ CHANGE THIS PASSWORD IMMEDIATELY - Use a strong password!
+const ADMIN_PASSWORD = 'sandeep123';
+const SESSION_TIMEOUT = 60 * 60 * 1000; // 1 hour in milliseconds
+
+// Check if admin is logged in
+function isAdminLoggedIn() {
+    const session = sessionStorage.getItem('adminSession');
+    return session === 'true';
+}
+
+// Admin login function
+function adminLogin() {
+    const password = document.getElementById('adminPassword').value;
+    const errorMsg = document.getElementById('loginError');
+    
+    if (!password) {
+        errorMsg.textContent = '❌ Please enter password';
+        errorMsg.style.display = 'block';
+        return;
+    }
+    
+    // Simple password check
+    if (password === ADMIN_PASSWORD) {
+        // Store session (not persisted - only for current tab)
+        sessionStorage.setItem('adminSession', 'true');
+        sessionStorage.setItem('adminLoginTime', Date.now());
+        
+        // Clear password field
+        document.getElementById('adminPassword').value = '';
+        errorMsg.style.display = 'none';
+        
+        // Show admin panel
+        showAdminPanel();
+    } else {
+        errorMsg.textContent = '❌ Incorrect password. Try again.';
+        errorMsg.style.display = 'block';
+        document.getElementById('adminPassword').value = '';
+        document.getElementById('adminPassword').focus();
+    }
+}
+
+// Show admin panel
+function showAdminPanel() {
+    // Hide login page
+    document.getElementById('adminLogin').classList.remove('active');
+    
+    // Show admin section
+    document.getElementById('admin').classList.add('active');
+    
+    // Load admin data
+    renderAdminTable();
+    
+    console.log('✅ Admin logged in successfully');
+    window.scrollTo(0, 0);
+}
+
+// Admin logout function
+function adminLogout() {
+    sessionStorage.removeItem('adminSession');
+    sessionStorage.removeItem('adminLoginTime');
+    
+    document.getElementById('admin').classList.remove('active');
+    document.getElementById('adminLogin').classList.add('active');
+    document.getElementById('adminPassword').value = '';
+    
+    console.log('❌ Admin logged out');
+    alert('Logged out successfully');
+    window.scrollTo(0, 0);
+}
+
+// Check session on app load
+function checkAdminSession() {
+    if (isAdminLoggedIn()) {
+        // Auto-logout after timeout
+        const loginTime = parseInt(sessionStorage.getItem('adminLoginTime'));
+        const now = Date.now();
+        
+        if (now - loginTime > SESSION_TIMEOUT) {
+            adminLogout();
+            alert('⏰ Session expired. Please login again.');
+        } else {
+            // Session still valid
+            showAdminPanel();
+        }
+    }
 }
 
 // ========== NOTIFICATION CONFIGURATION ==========
