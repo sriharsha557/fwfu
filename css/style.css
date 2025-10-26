@@ -151,7 +151,7 @@ nav a:hover {
 .hero {
     background: url('../images/fwfu-hero.png') center/cover no-repeat;
     color: #fff;
-    padding: 5rem 2rem;
+    padding: 5rem 2rem 3rem;
     border-radius: 20px;
     text-align: center;
     margin-bottom: 3rem;
@@ -160,7 +160,7 @@ nav a:hover {
     min-height: 500px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -193,7 +193,7 @@ nav a:hover {
 
 .hero p {
     font-size: 1.3rem;
-    margin-bottom: 4rem;
+    margin-bottom: auto;
     color: #fff;
     text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.7);
     opacity: 0.95;
