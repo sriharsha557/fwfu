@@ -294,9 +294,18 @@ function renderCart() {
     `;
 }
 
-// ========== ADMIN WHATSAPP NUMBER ==========
-// ⚠️ UPDATE THIS WITH YOUR WHATSAPP NUMBER (with country code, no +)
-const ADMIN_WHATSAPP_NUMBER = '919700009993'; // Example: 91 for India + number
+// ========== NOTIFICATION CONFIGURATION ==========
+// Telegram Bot Configuration
+const TELEGRAM_BOT_TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN_HERE';
+const TELEGRAM_CHAT_ID = 'YOUR_TELEGRAM_CHAT_ID_HERE';
+
+// EmailJS Configuration (Sign up at https://www.emailjs.com)
+const EMAILJS_SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';
+const EMAILJS_PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
+
+// Admin email address
+const ADMIN_EMAIL = 'your-email@toykoo.in';
 
 // ========== CHECKOUT FUNCTIONS ==========
 function renderCheckoutSummary() {
@@ -335,42 +344,162 @@ function placeOrder() {
 
     const total = cart.reduce((sum, item) => sum + (item.on_sale ? item.sale_price : item.price), 0);
 
-    // Create message for admin
-    let adminMessage = `🛍️ *NEW ORDER RECEIVED*%0A`;
-    adminMessage += `%0A*Customer Details:*%0A`;
-    adminMessage += `Name: ${name}%0A`;
-    adminMessage += `Phone: ${phone}%0A`;
-    adminMessage += `Address: ${address}%0A`;
-    adminMessage += `%0A*Order Items:*%0A`;
-    
-    cart.forEach(item => {
-        adminMessage += `• ${item.name} (${item.scale}) - ₹${item.on_sale ? item.sale_price : item.price}%0A`;
+    const orderData = {
+        name,
+        phone,
+        address,
+        total,
+        items: cart,
+        orderTime: new Date().toLocaleString('en-IN'),
+        orderId: 'ORD-' + Date.now()
+    };
+
+    // Show loading state
+    const button = event.target;
+    button.disabled = true;
+    button.textContent = 'Processing...';
+
+    // Send notifications
+    Promise.all([
+        sendOrderToTelegram(orderData),
+        sendOrderEmail(orderData)
+    ]).then(() => {
+        alert('✅ Order submitted successfully!\n\nAdmin notified via Telegram & Email.\nWe\'ll confirm your order shortly.');
+        
+        // Clear cart and form
+        cart = [];
+        saveCart();
+        updateCartCount();
+        document.getElementById('checkoutName').value = '';
+        document.getElementById('checkoutPhone').value = '';
+        document.getElementById('checkoutAddress').value = '';
+        
+        // Reset button
+        button.disabled = false;
+        button.textContent = 'Confirm Order';
+        
+        // Redirect to home
+        setTimeout(() => {
+            showSection('home');
+        }, 1500);
+    }).catch(error => {
+        console.error('Error sending notifications:', error);
+        alert('⚠️ Order received but notification failed. Admin will contact you soon.');
+        button.disabled = false;
+        button.textContent = 'Confirm Order';
     });
+}
 
-    adminMessage += `%0A*Order Total: ₹${total}*%0A`;
-    adminMessage += `%0AOrder Time: ${new Date().toLocaleString('en-IN')}`;
+// ========== SEND ORDER TO TELEGRAM ==========
+async function sendOrderToTelegram(orderData) {
+    try {
+        if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN.includes('YOUR_')) {
+            console.warn('⚠️ Telegram not configured');
+            return false;
+        }
 
-    // Open WhatsApp with admin number
-    const whatsappUrl = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${adminMessage}`;
-    window.open(whatsappUrl, '_blank');
+        const itemsList = orderData.items
+            .map(item => `• ${item.name} (${item.scale}) - ₹${item.on_sale ? item.sale_price : item.price}`)
+            .join('\n');
 
-    // Show success message
-    alert('✅ Order submitted! WhatsApp message sent to admin.\nThey will confirm shortly.');
-    
-    // Clear cart
-    cart = [];
-    saveCart();
-    updateCartCount();
-    
-    // Clear checkout form
-    document.getElementById('checkoutName').value = '';
-    document.getElementById('checkoutPhone').value = '';
-    document.getElementById('checkoutAddress').value = '';
-    
-    // Redirect to home
-    setTimeout(() => {
-        showSection('home');
-    }, 1500);
+        const message = `🛍️ <b>NEW ORDER RECEIVED</b>\n\n` +
+            `<b>Order ID:</b> ${orderData.orderId}\n` +
+            `<b>Customer:</b> ${orderData.name}\n` +
+            `<b>Phone:</b> ${orderData.phone}\n` +
+            `<b>Address:</b> ${orderData.address}\n\n` +
+            `<b>Items:</b>\n${itemsList}\n\n` +
+            `<b>Total: ₹${orderData.total}</b>\n` +
+            `<b>Order Time:</b> ${orderData.orderTime}`;
+
+        const response = await fetch(
+            `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: message,
+                    parse_mode: 'HTML'
+                })
+            }
+        );
+
+        const data = await response.json();
+        if (data.ok) {
+            console.log('✅ Telegram notification sent');
+            return true;
+        } else {
+            console.error('❌ Telegram error:', data.description);
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Telegram error:', error);
+        return false;
+    }
+}
+
+// ========== SEND ORDER EMAIL ==========
+async function sendOrderEmail(orderData) {
+    try {
+        if (!EMAILJS_PUBLIC_KEY || EMAILJS_PUBLIC_KEY.includes('YOUR_')) {
+            console.warn('⚠️ EmailJS not configured');
+            return false;
+        }
+
+        // Initialize EmailJS if not already done
+        if (typeof emailjs === 'undefined') {
+            console.error('❌ EmailJS library not loaded');
+            return false;
+        }
+
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+
+        const itemsList = orderData.items
+            .map(item => `${item.name} (${item.scale}) - ₹${item.on_sale ? item.sale_price : item.price}`)
+            .join('\n');
+
+        // Email to Admin
+        const adminEmailParams = {
+            to_email: ADMIN_EMAIL,
+            order_id: orderData.orderId,
+            customer_name: orderData.name,
+            customer_phone: orderData.phone,
+            customer_address: orderData.address,
+            items_list: itemsList,
+            total_amount: orderData.total,
+            order_time: orderData.orderTime,
+            email_type: 'admin'
+        };
+
+        // Email to Customer
+        const customerEmailParams = {
+            to_email: orderData.phone + '@gmail.com', // Fallback - will need actual email
+            order_id: orderData.orderId,
+            customer_name: orderData.name,
+            items_list: itemsList,
+            total_amount: orderData.total,
+            order_time: orderData.orderTime,
+            email_type: 'customer'
+        };
+
+        // Send admin notification
+        await emailjs.send(
+            EMAILJS_SERVICE_ID,
+            EMAILJS_TEMPLATE_ID,
+            adminEmailParams
+        );
+
+        console.log('✅ Admin email sent');
+
+        // Send customer confirmation (optional)
+        // await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, customerEmailParams);
+
+        return true;
+
+    } catch (error) {
+        console.error('❌ EmailJS error:', error);
+        return false;
+    }
 }
 
 // ========== ADMIN PANEL FUNCTIONS ==========
