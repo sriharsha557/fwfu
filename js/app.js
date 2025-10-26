@@ -21,39 +21,47 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function init() {
     try {
-        await fetchProductsFromSupabase();
         loadCart();
-        renderFeaturedProducts();
-        renderAdminTable();
         updateCartCount();
+        await fetchProductsFromSupabase();
+        renderFeaturedProducts();
+        renderProducts();
+        renderAdminTable();
         console.log('✅ App initialized successfully');
     } catch (error) {
         console.error('❌ Initialization error:', error);
         // Show default products if Supabase fails
         initializeDefaultProducts();
+        renderFeaturedProducts();
+        renderProducts();
     }
 }
 
 // ========== FETCH PRODUCTS FROM SUPABASE ==========
 async function fetchProductsFromSupabase() {
     try {
+        console.log('🔄 Fetching products from Supabase...');
+        
         const { data, error } = await supabase
             .from('products')
             .select('*')
-            .order('id', { ascending: false });
+            .order('created_at', { ascending: false });
 
         if (error) {
-            console.warn('Supabase fetch error:', error);
-            initializeDefaultProducts();
+            console.warn('⚠️ Supabase fetch error:', error);
             return;
         }
 
-        products = data || [];
-        console.log(`✅ Loaded ${products.length} products from Supabase`);
-        renderProducts();
-        renderFeaturedProducts();
+        if (data && data.length > 0) {
+            products = data;
+            console.log(`✅ Loaded ${products.length} products from Supabase`);
+        } else {
+            console.warn('⚠️ No products in Supabase. Using default products.');
+            initializeDefaultProducts();
+        }
+        
     } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error('❌ Error fetching products:', error);
         initializeDefaultProducts();
     }
 }
@@ -310,7 +318,7 @@ const ADMIN_EMAIL = 'your-email@toykoo.in';
 
 // ========== ADMIN AUTHENTICATION ==========
 // ⚠️ CHANGE THIS PASSWORD IMMEDIATELY - Use a strong password!
-const ADMIN_PASSWORD = 'sandeep123';
+const ADMIN_PASSWORD = 'toykoo123';
 const SESSION_TIMEOUT = 60 * 60 * 1000; // 1 hour in milliseconds
 
 // Check if admin is logged in
@@ -389,10 +397,8 @@ function checkAdminSession() {
         if (now - loginTime > SESSION_TIMEOUT) {
             adminLogout();
             alert('⏰ Session expired. Please login again.');
-        } else {
-            // Session still valid
-            showAdminPanel();
         }
+        // Don't auto-show admin panel, let user navigate to it
     }
 }
 
