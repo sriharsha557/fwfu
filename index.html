@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FWFU.in - Four Wheels For You</title>
+    <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23DC143C' width='100' height='100'/><text x='50' y='60' font-size='60' fill='white' text-anchor='middle' font-weight='bold'>🚗</text></svg>">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-container">
+            <div class="header-left">
+                <div class="header-logo-img">
+                    <!-- PLACEHOLDER: Replace with your logo image -->
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23DC143C' width='100' height='100' rx='10'/%3E%3Ctext x='50' y='60' font-size='50' fill='white' text-anchor='middle' font-weight='bold'%3E🚗%3C/text%3E%3C/svg%3E" 
+                         alt="FWFU Logo">
+                </div>
+                <div class="logo">FWFU.in</div>
+            </div>
+            <nav>
+                <a onclick="showSection('home')">Home</a>
+                <a onclick="showSection('shop')">Shop</a>
+                <a onclick="showSection('cart')" class="cart-icon">
+                    🛒 Cart
+                    <span class="cart-count" id="cartCount">0</span>
+                </a>
+                <a onclick="showSection('admin')">Admin</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- HOME SECTION -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <h1>Welcome to FWFU.in</h1>
+                <p>Discover the finest collection of miniature cars</p>
+                <button onclick="showSection('shop')">Start Shopping</button>
+            </div>
+
+            <h2 class="section-title">✨ Featured Collections</h2>
+            <div class="products-grid" id="featuredProducts"></div>
+        </section>
+
+        <!-- SHOP SECTION -->
+        <section id="shop" class="section">
+            <h1>Our Collection</h1>
+            
+            <div class="filters">
+                <div class="filter-group">
+                    <label>
+                        Brand
+                        <select id="filterBrand" onchange="applyFilters()">
+                            <option value="">All Brands</option>
+                            <option value="Hot Wheels">Hot Wheels</option>
+                            <option value="Majorette">Majorette</option>
+                            <option value="Bburago">Bburago</option>
+                            <option value="Siku">Siku</option>
+                        </select>
+                    </label>
+                    <label>
+                        Scale
+                        <select id="filterScale" onchange="applyFilters()">
+                            <option value="">All Scales</option>
+                            <option value="1:12">1:12</option>
+                            <option value="1:18">1:18</option>
+                            <option value="1:24">1:24</option>
+                            <option value="1:43">1:43</option>
+                        </select>
+                    </label>
+                    <label>
+                        Category
+                        <select id="filterCategory" onchange="applyFilters()">
+                            <option value="">All Categories</option>
+                            <option value="Sports">Sports</option>
+                            <option value="SUV">SUV</option>
+                            <option value="Classic">Classic</option>
+                            <option value="Truck">Truck</option>
+                        </select>
+                    </label>
+                    <label>
+                        Price Range (₹)
+                        <input type="number" id="filterPrice" placeholder="Max price" onchange="applyFilters()">
+                    </label>
+                    <label>
+                        <input type="checkbox" id="filterStock" onchange="applyFilters()"> In Stock Only
+                    </label>
+                    <label>
+                        <input type="checkbox" id="filterSale" onchange="applyFilters()"> On Sale
+                    </label>
+                </div>
+            </div>
+
+            <div class="products-grid" id="productsGrid"></div>
+        </section>
+
+        <!-- CART SECTION -->
+        <section id="cart" class="section">
+            <h1>Shopping Cart</h1>
+            <div id="cartContent"></div>
+        </section>
+
+        <!-- CHECKOUT SECTION -->
+        <section id="checkout" class="section">
+            <h1>Checkout</h1>
+            <div class="checkout-form">
+                <div class="summary" id="checkoutSummary"></div>
+                <div class="admin-form">
+                    <div class="form-group">
+                        <label>Name *</label>
+                        <input type="text" id="checkoutName" placeholder="Your name">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone *</label>
+                        <input type="tel" id="checkoutPhone" placeholder="Your phone number">
+                    </div>
+                    <div class="form-group">
+                        <label>Shipping Address *</label>
+                        <textarea id="checkoutAddress" placeholder="Your complete address"></textarea>
+                    </div>
+                </div>
+                <button class="btn" onclick="placeOrder()">Confirm via WhatsApp</button>
+                <button class="btn btn-secondary" onclick="showSection('cart')">Back to Cart</button>
+            </div>
+        </section>
+
+        <!-- ADMIN SECTION -->
+        <section id="admin" class="section">
+            <div class="admin-panel">
+                <h1>Admin Panel</h1>
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchAdminTab('products')">Manage Products</button>
+                    <button class="tab-btn" onclick="switchAdminTab('add')">Add New Product</button>
+                </div>
+
+                <div id="adminProducts">
+                    <h3>All Products</h3>
+                    <table class="admin-table" id="adminTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Brand</th>
+                                <th>Scale</th>
+                                <th>Price (₹)</th>
+                                <th>Sale Price (₹)</th>
+                                <th>Stock</th>
+                                <th>Sale</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody"></tbody>
+                    </table>
+                </div>
+
+                <div id="adminAdd" style="display:none;">
+                    <h3>Add New Product</h3>
+                    <div class="admin-form">
+                        <div class="form-group">
+                            <label>Product Name *</label>
+                            <input type="text" id="adminName" placeholder="e.g., Ferrari 488">
+                        </div>
+                        <div class="form-group">
+                            <label>Brand *</label>
+                            <select id="adminBrand">
+                                <option value="">Select Brand</option>
+                                <option value="Hot Wheels">Hot Wheels</option>
+                                <option value="Majorette">Majorette</option>
+                                <option value="Bburago">Bburago</option>
+                                <option value="Siku">Siku</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Scale *</label>
+                            <select id="adminScale">
+                                <option value="">Select Scale</option>
+                                <option value="1:12">1:12</option>
+                                <option value="1:18">1:18</option>
+                                <option value="1:24">1:24</option>
+                                <option value="1:43">1:43</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Category *</label>
+                            <select id="adminCategory">
+                                <option value="">Select Category</option>
+                                <option value="Sports">Sports</option>
+                                <option value="SUV">SUV</option>
+                                <option value="Classic">Classic</option>
+                                <option value="Truck">Truck</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Price (₹) *</label>
+                            <input type="number" id="adminPrice" placeholder="1500" min="0" step="10">
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="adminDescription" placeholder="Product description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="adminInStock" checked> In Stock
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="adminOnSale"> On Sale
+                            </label>
+                        </div>
+                        <div class="form-group" id="salePriceGroup" style="display:none;">
+                            <label>Sale Price (₹)</label>
+                            <input type="number" id="adminSalePrice" placeholder="Sale price" min="0" step="10">
+                        </div>
+                        <button class="btn" onclick="addNewProduct()">Add Product</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-grid">
+                <!-- Footer Logo Section -->
+                <div class="footer-section">
+                    <div class="footer-logo-section">
+                        <div class="footer-logo-img">🚗</div>
+                        <h3>FWFU.in</h3>
+                    </div>
+                    <p>Your destination for premium miniature cars</p>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#" onclick="showSection('shop')">Shop</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <ul class="contact-list">
+                        <li>📧 info@fwfu.in</li>
+                        <li>📱 +91 XXXXXXXXXX</li>
+                        <li>📍 Your Location</li>
+                    </ul>
+                </div>
+
+                <!-- Social Links -->
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#">f</a>
+                        <a href="#">𝕏</a>
+                        <a href="#">📷</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <p>&copy; 2024 FWFU.in - Four Wheels For You. All rights reserved.</p>
+                <p>
+                    <a href="#">Privacy Policy</a> | 
+                    <a href="#">Terms & Conditions</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
