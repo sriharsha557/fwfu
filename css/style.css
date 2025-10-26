@@ -149,7 +149,8 @@ nav a:hover {
 
 /* ========== HERO SECTION ========== */
 .hero {
-    background: linear-gradient(135deg, #66023c 0%, #DC143C 50%, #cd1c18 100%);
+    background: linear-gradient(135deg, rgba(102, 2, 60, 0.8) 0%, rgba(220, 20, 60, 0.8) 50%, rgba(205, 28, 24, 0.8) 100%), 
+                url('images/hero-bg.jpg') center/cover no-repeat;
     color: #fff;
     padding: 5rem 2rem;
     border-radius: 20px;
@@ -158,6 +159,11 @@ nav a:hover {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     position: relative;
     overflow: hidden;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .hero::before {
@@ -169,6 +175,14 @@ nav a:hover {
     height: 500px;
     background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
     animation: float 6s ease-in-out infinite;
+    z-index: 1;
+}
+
+.hero h1,
+.hero p,
+.hero button {
+    position: relative;
+    z-index: 2;
 }
 
 @keyframes float {
