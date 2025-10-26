@@ -6,7 +6,7 @@ const BUCKET_NAME = 'product-images';
 
 // Initialize Supabase client
 const { createClient } = window.supabase;
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ========== PRODUCT DATABASE ==========
 let products = [];
@@ -68,7 +68,7 @@ function initializeDefaultProducts() {
             category: "Sports",
             price: 2500,
             description: "Red sports car",
-            image_url: `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/ferari.jpg`,
+            image_url: `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/default-car-1.jpg`,
             in_stock: true,
             on_sale: true,
             sale_price: 1999,
@@ -82,7 +82,7 @@ function initializeDefaultProducts() {
             category: "Sports",
             price: 1500,
             description: "Black sedan",
-            image_url: `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/bmw.jpg`,
+            image_url: `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/default-car-2.jpg`,
             in_stock: true,
             on_sale: false,
             sale_price: null,
@@ -96,7 +96,7 @@ function initializeDefaultProducts() {
             category: "Classic",
             price: 800,
             description: "Classic muscle car",
-            image_url: `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/ford.jpg`,
+            image_url: `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/default-car-3.jpg`,
             in_stock: true,
             on_sale: true,
             sale_price: 599,
@@ -294,6 +294,10 @@ function renderCart() {
     `;
 }
 
+// ========== ADMIN WHATSAPP NUMBER ==========
+// ⚠️ UPDATE THIS WITH YOUR WHATSAPP NUMBER (with country code, no +)
+const ADMIN_WHATSAPP_NUMBER = '919700009993'; // Example: 91 for India + number
+
 // ========== CHECKOUT FUNCTIONS ==========
 function renderCheckoutSummary() {
     const summary = document.getElementById('checkoutSummary');
@@ -331,21 +335,42 @@ function placeOrder() {
 
     const total = cart.reduce((sum, item) => sum + (item.on_sale ? item.sale_price : item.price), 0);
 
-    let message = `Hi, I'd like to place an order from FWFU.in:%0A%0A`;
+    // Create message for admin
+    let adminMessage = `🛍️ *NEW ORDER RECEIVED*%0A`;
+    adminMessage += `%0A*Customer Details:*%0A`;
+    adminMessage += `Name: ${name}%0A`;
+    adminMessage += `Phone: ${phone}%0A`;
+    adminMessage += `Address: ${address}%0A`;
+    adminMessage += `%0A*Order Items:*%0A`;
     
     cart.forEach(item => {
-        message += `• ${item.name} (${item.scale} Scale) - ₹${item.on_sale ? item.sale_price : item.price}%0A`;
+        adminMessage += `• ${item.name} (${item.scale}) - ₹${item.on_sale ? item.sale_price : item.price}%0A`;
     });
 
-    message += `%0ATotal: ₹${total}%0A`;
-    message += `Shipping Address: ${address}%0A`;
-    message += `Name: ${name}%0APhone: ${phone}`;
+    adminMessage += `%0A*Order Total: ₹${total}*%0A`;
+    adminMessage += `%0AOrder Time: ${new Date().toLocaleString('en-IN')}`;
 
-    window.open(`https://wa.me/?text=${message}`, '_blank');
+    // Open WhatsApp with admin number
+    const whatsappUrl = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${adminMessage}`;
+    window.open(whatsappUrl, '_blank');
+
+    // Show success message
+    alert('✅ Order submitted! WhatsApp message sent to admin.\nThey will confirm shortly.');
     
+    // Clear cart
     cart = [];
     saveCart();
     updateCartCount();
+    
+    // Clear checkout form
+    document.getElementById('checkoutName').value = '';
+    document.getElementById('checkoutPhone').value = '';
+    document.getElementById('checkoutAddress').value = '';
+    
+    // Redirect to home
+    setTimeout(() => {
+        showSection('home');
+    }, 1500);
 }
 
 // ========== ADMIN PANEL FUNCTIONS ==========
