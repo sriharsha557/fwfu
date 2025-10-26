@@ -1,4 +1,39 @@
-// ========== SUPABASE CONFIGURATION ==========
+// ========== INITIALIZATION ==========
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📄 DOM Loaded - Starting initialization...');
+    init();
+    checkAdminSession();
+});
+
+async function init() {
+    try {
+        console.log('🔄 Initializing app...');
+        loadCart();
+        updateCartCount();
+        console.log('📦 Cart loaded');
+        
+        await fetchProductsFromSupabase();
+        console.log('📊 Products fetched. Total:', products.length);
+        
+        renderFeaturedProducts();
+        console.log('✅ Featured products rendered');
+        
+        renderProducts();
+        console.log('✅ All products rendered');
+        
+        renderAdminTable();
+        console.log('✅ Admin table ready');
+        
+        console.log('✅ App initialized successfully');
+        console.log('Products array:', products);
+    } catch (error) {
+        console.error('❌ Initialization error:', error);
+        console.log('Loading default products...');
+        initializeDefaultProducts();
+        renderFeaturedProducts();
+        renderProducts();
+    }
+}// ========== SUPABASE CONFIGURATION ==========
 // ⚠️ IMPORTANT: Replace these with your actual values from Supabase
 const SUPABASE_URL = 'https://fxwdnjgecqswhypelmet.supabase.co';
 const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4d2RuamdlY3Fzd2h5cGVsbWV0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTQ5MTEyOSwiZXhwIjoyMDc3MDY3MTI5fQ.yMClkljE0XeBVBM4xobYlrwNcy69ROgSlm8RLIJYCCs';
@@ -6,14 +41,12 @@ const BUCKET_NAME = 'product-images';
 
 // Initialize Supabase client
 const { createClient } = window.supabase;
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 // ========== PRODUCT DATABASE ==========
 let products = [];
 let cart = [];
 let nextId = 1;
-
-// ========== INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', function() {
     init();
     checkAdminSession();
@@ -40,7 +73,8 @@ async function init() {
 // ========== FETCH PRODUCTS FROM SUPABASE ==========
 async function fetchProductsFromSupabase() {
     try {
-        console.log('🔄 Fetching products from Supabase...');
+        console.log('🔄 Connecting to Supabase...');
+        console.log('URL:', SUPABASE_URL);
         
         const { data, error } = await supabase
             .from('products')
@@ -48,20 +82,24 @@ async function fetchProductsFromSupabase() {
             .order('created_at', { ascending: false });
 
         if (error) {
-            console.warn('⚠️ Supabase fetch error:', error);
+            console.error('⚠️ Supabase Error:', error);
+            console.log('Using default products instead');
+            initializeDefaultProducts();
             return;
         }
 
         if (data && data.length > 0) {
             products = data;
             console.log(`✅ Loaded ${products.length} products from Supabase`);
+            console.log('Products:', products);
         } else {
             console.warn('⚠️ No products in Supabase. Using default products.');
             initializeDefaultProducts();
         }
         
     } catch (error) {
-        console.error('❌ Error fetching products:', error);
+        console.error('❌ Fetch Error:', error.message);
+        console.log('Using default products instead');
         initializeDefaultProducts();
     }
 }
@@ -303,7 +341,13 @@ function renderCart() {
     `;
 }
 
-// ========== NOTIFICATION CONFIGURATION ==========
+// ========== GLOBAL CONFIGURATION ==========
+// Supabase
+const SUPABASE_URL = 'https://fxwdnjgecqswhypelmet.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4d2RuamhlY3Fzd2h5cGVsbWV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0OTI5NDcsImV4cCI6MjA3NzA2ODk0N30.L3vb0GwVDECCLFzp0U_GKzKb9FqM38fL0VpDdxZNk7Y';
+const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4d2RuamdlY3Fzd2h5cGVsbWV0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTQ5MTEyOSwiZXhwIjoyMDc3MDY3MTI5fQ.yMClkljE0XeBVBM4xobYlrwNcy69ROgSlm8RLIJYCCs';
+const BUCKET_NAME = 'product-images';
+
 // Telegram Bot Configuration
 const TELEGRAM_BOT_TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN_HERE';
 const TELEGRAM_CHAT_ID = 'YOUR_TELEGRAM_CHAT_ID_HERE';
@@ -313,107 +357,14 @@ const EMAILJS_SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';
 const EMAILJS_TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';
 const EMAILJS_PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
 
-// Admin email address
-const ADMIN_EMAIL = 'your-email@toykoo.in';
-
-// ========== ADMIN AUTHENTICATION ==========
-// ⚠️ CHANGE THIS PASSWORD IMMEDIATELY - Use a strong password!
-const ADMIN_PASSWORD = 'sandeep@123';
+// Admin Configuration
+const ADMIN_EMAIL = 'your-email@fwfu.in';
+const ADMIN_PASSWORD = 'sandeep@123'; // ⚠️ CHANGE THIS IMMEDIATELY!
 const SESSION_TIMEOUT = 60 * 60 * 1000; // 1 hour in milliseconds
 
-// Check if admin is logged in
-function isAdminLoggedIn() {
-    const session = sessionStorage.getItem('adminSession');
-    return session === 'true';
-}
-
-// Admin login function
-function adminLogin() {
-    const password = document.getElementById('adminPassword').value;
-    const errorMsg = document.getElementById('loginError');
-    
-    if (!password) {
-        errorMsg.textContent = '❌ Please enter password';
-        errorMsg.style.display = 'block';
-        return;
-    }
-    
-    // Simple password check
-    if (password === ADMIN_PASSWORD) {
-        // Store session (not persisted - only for current tab)
-        sessionStorage.setItem('adminSession', 'true');
-        sessionStorage.setItem('adminLoginTime', Date.now());
-        
-        // Clear password field
-        document.getElementById('adminPassword').value = '';
-        errorMsg.style.display = 'none';
-        
-        // Show admin panel
-        showAdminPanel();
-    } else {
-        errorMsg.textContent = '❌ Incorrect password. Try again.';
-        errorMsg.style.display = 'block';
-        document.getElementById('adminPassword').value = '';
-        document.getElementById('adminPassword').focus();
-    }
-}
-
-// Show admin panel
-function showAdminPanel() {
-    // Hide login page
-    document.getElementById('adminLogin').classList.remove('active');
-    
-    // Show admin section
-    document.getElementById('admin').classList.add('active');
-    
-    // Load admin data
-    renderAdminTable();
-    
-    console.log('✅ Admin logged in successfully');
-    window.scrollTo(0, 0);
-}
-
-// Admin logout function
-function adminLogout() {
-    sessionStorage.removeItem('adminSession');
-    sessionStorage.removeItem('adminLoginTime');
-    
-    document.getElementById('admin').classList.remove('active');
-    document.getElementById('adminLogin').classList.add('active');
-    document.getElementById('adminPassword').value = '';
-    
-    console.log('❌ Admin logged out');
-    alert('Logged out successfully');
-    window.scrollTo(0, 0);
-}
-
-// Check session on app load
-function checkAdminSession() {
-    if (isAdminLoggedIn()) {
-        // Auto-logout after timeout
-        const loginTime = parseInt(sessionStorage.getItem('adminLoginTime'));
-        const now = Date.now();
-        
-        if (now - loginTime > SESSION_TIMEOUT) {
-            adminLogout();
-            alert('⏰ Session expired. Please login again.');
-        }
-        // Don't auto-show admin panel, let user navigate to it
-    }
-}
-
-// ========== NOTIFICATION CONFIGURATION ==========
-// Telegram Bot Configuration
-const TELEGRAM_BOT_TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN_HERE';
-const TELEGRAM_CHAT_ID = 'YOUR_TELEGRAM_CHAT_ID_HERE';
-
-// EmailJS Configuration (Sign up at https://www.emailjs.com)
-const EMAILJS_SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';
-const EMAILJS_TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';
-const EMAILJS_PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
-
-// Admin email address
-const ADMIN_EMAIL = 'your-email@toykoo.in';
+// Initialize Supabase client
+const { createClient } = window.supabase;
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 // ========== CHECKOUT FUNCTIONS ==========
 function renderCheckoutSummary() {
