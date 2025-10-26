@@ -1,12 +1,12 @@
 // ========== SUPABASE CONFIGURATION ==========
 // ⚠️ IMPORTANT: Replace these with your actual values from Supabase
 const SUPABASE_URL = 'https://fxwdnjgecqswhypelmet.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4d2RuamdlY3Fzd2h5cGVsbWV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE0OTExMjksImV4cCI6MjA3NzA2NzEyOX0.MoPHJYNhg7-61DQTqE8ehGcfdaG6bN9MSbr6fCJcbaw';
+const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4d2RuamdlY3Fzd2h5cGVsbWV0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTQ5MTEyOSwiZXhwIjoyMDc3MDY3MTI5fQ.yMClkljE0XeBVBM4xobYlrwNcy69ROgSlm8RLIJYCCs';
 const BUCKET_NAME = 'product-images';
 
 // Initialize Supabase client
 const { createClient } = window.supabase;
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 // ========== PRODUCT DATABASE ==========
 let products = [];
