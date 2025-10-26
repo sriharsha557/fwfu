@@ -318,7 +318,7 @@ const ADMIN_EMAIL = 'your-email@toykoo.in';
 
 // ========== ADMIN AUTHENTICATION ==========
 // ⚠️ CHANGE THIS PASSWORD IMMEDIATELY - Use a strong password!
-const ADMIN_PASSWORD = 'toykoo123';
+const ADMIN_PASSWORD = 'sandeep@123';
 const SESSION_TIMEOUT = 60 * 60 * 1000; // 1 hour in milliseconds
 
 // Check if admin is logged in
