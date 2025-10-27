@@ -16,7 +16,7 @@ body {
 
 /* ========== HEADER STYLES ========== */
 header {
-    background: linear-gradient(135deg, #66023c 0%, #DC143C 50%, #cd1c18 100%);
+    background: linear-gradient(135deg, #C9A961 0%, #D4AF37 50%, #F4D03F 100%);
     color: white;
     padding: 1.2rem 0;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
@@ -201,7 +201,7 @@ nav a:hover {
 
 .hero button {
     background: white;
-    color: #DC143C;
+    color: #C9A961;
     border: none;
     padding: 1rem 2.5rem;
     font-size: 1.1rem;
@@ -233,7 +233,7 @@ nav a:hover {
     margin: 3rem 0 2.5rem;
     text-align: center;
     font-size: 2.5rem;
-    color: #DC143C;
+    color: #C9A961;
     font-weight: 700;
     position: relative;
 }
@@ -250,14 +250,14 @@ nav a:hover {
     display: block;
     width: 80px;
     height: 4px;
-    background: linear-gradient(135deg, #DC143C 0%, #FF6B6B 100%);
+    background: linear-gradient(135deg, #C9A961 0%, #F4D03F 100%);
     margin: 1rem auto 0;
     border-radius: 2px;
 }
 
 h1 {
     margin-bottom: 1.5rem;
-    color: #DC143C;
+    color: #C9A961;
 }
 
 /* ========== FILTER STYLES ========== */
@@ -334,7 +334,7 @@ h1 {
     position: absolute;
     top: 10px;
     right: 10px;
-    background: #DC143C;
+    background: #C9A961;
     color: white;
     padding: 0.3rem 0.8rem;
     border-radius: 20px;
@@ -347,7 +347,7 @@ h1 {
 }
 
 .product-brand {
-    color: #DC143C;
+    color: #C9A961;
     font-size: 0.85rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -369,7 +369,7 @@ h1 {
 .product-price {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #DC143C;
+    color: #C9A961;
     margin: 1rem 0 0.5rem;
 }
 
@@ -382,7 +382,7 @@ h1 {
 
 /* ========== BUTTON STYLES ========== */
 .btn {
-    background: linear-gradient(135deg, #66023c 0%, #DC143C 100%);
+    background: linear-gradient(135deg, #C9A961 0%, #D4AF37 100%);
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
@@ -397,7 +397,7 @@ h1 {
 
 .btn:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(220, 20, 60, 0.3);
+    box-shadow: 0 5px 15px rgba(201, 169, 97, 0.4);
 }
 
 .btn:disabled {
@@ -426,7 +426,7 @@ h1 {
 }
 
 .cart-table th {
-    background: linear-gradient(135deg, #DC143C 0%, #FF6B6B 100%);
+    background: linear-gradient(135deg, #C9A961 0%, #D4AF37 100%);
     color: white;
     padding: 1rem;
     text-align: left;
@@ -519,7 +519,7 @@ h1 {
     justify-content: space-between;
     font-size: 1.3rem;
     font-weight: bold;
-    color: #DC143C;
+    color: #C9A961;
     border-top: 2px solid #ddd;
     padding-top: 1rem;
 }
@@ -552,8 +552,8 @@ h1 {
 }
 
 .tab-btn.active {
-    color: #DC143C;
-    border-bottom-color: #DC143C;
+    color: #C9A961;
+    border-bottom-color: #C9A961;
 }
 
 .admin-table {
@@ -605,13 +605,13 @@ h1 {
     box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
     max-width: 400px;
     width: 100%;
-    border-top: 4px solid linear-gradient(135deg, #66023c 0%, #DC143C 100%);
+    border-top: 4px solid #C9A961;
 }
 
 .login-box h1 {
     text-align: center;
     margin-bottom: 0.5rem;
-    color: #66023c;
+    color: #C9A961;
     font-size: 1.8rem;
 }
 
@@ -644,8 +644,8 @@ h1 {
 
 .login-box .form-group input:focus {
     outline: none;
-    border-color: #DC143C;
-    box-shadow: 0 0 0 3px rgba(220, 20, 60, 0.1);
+    border-color: #C9A961;
+    box-shadow: 0 0 0 3px rgba(201, 169, 97, 0.15);
 }
 
 .login-box .btn {
@@ -654,7 +654,7 @@ h1 {
 
 /* ========== FOOTER STYLES ========== */
 footer {
-    background: linear-gradient(135deg, #66023c 0%, #DC143C 50%, #cd1c18 100%);
+    background: linear-gradient(135deg, #C9A961 0%, #D4AF37 50%, #F4D03F 100%);
     color: white;
     padding: 4rem 2rem 2rem;
     margin-top: 5rem;
