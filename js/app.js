@@ -400,9 +400,10 @@ async function sendOrderToTelegram(orderData) {
         }
         
         const itemsList = orderData.items
-            .map(item => {
+            .map((item, index) => {
                 const price = item.on_sale ? item.sale_price : item.price;
-                return `• ${item.name} (${item.scale}) - ₹${price}`;
+                const productLink = `https://fwfu.in/#shop`;
+                return `• <a href="${productLink}">${item.name}</a> (${item.scale}) - ₹${price}`;
             })
             .join('\n');
         
