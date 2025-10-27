@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/build/es6/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
 </head>
 <body>
     <!-- HEADER -->
@@ -57,9 +58,43 @@
         <!-- HOME SECTION -->
         <section id="home" class="section active">
             <div class="hero">
-                <h1>FOUR WHEELS FOR YOU</h1>
-                <p>Experience the Art of Precision Engineering</p>
-                <button onclick="showSection('shop')">Explore Collection</button>
+                <!-- Animation Container -->
+                <div class="hero-animation">
+                    <svg viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice">
+                        <!-- Motion Path -->
+                        <path id="motionPath" d="M 50,300 Q 300,100 600,300 T 1150,300" 
+                              fill="none" 
+                              stroke="rgba(201, 169, 97, 0.2)" 
+                              stroke-width="2"
+                              stroke-dasharray="10,10"/>
+                        
+                        <!-- Car SVG -->
+                        <g class="car" transform="translate(0, 0)">
+                            <!-- Car Body -->
+                            <rect x="-30" y="-10" width="60" height="20" fill="#C9A961" rx="3"/>
+                            <!-- Car Top -->
+                            <rect x="-20" y="-20" width="30" height="12" fill="#F4D03F" rx="2"/>
+                            <!-- Windows -->
+                            <rect x="-18" y="-18" width="12" height="8" fill="rgba(10, 10, 10, 0.3)" rx="1"/>
+                            <rect x="-4" y="-18" width="12" height="8" fill="rgba(10, 10, 10, 0.3)" rx="1"/>
+                            <!-- Wheels -->
+                            <circle cx="-18" cy="8" r="5" fill="#333"/>
+                            <circle cx="18" cy="8" r="5" fill="#333"/>
+                            <circle cx="-18" cy="8" r="3" fill="#666"/>
+                            <circle cx="18" cy="8" r="3" fill="#666"/>
+                            <!-- Headlights -->
+                            <circle cx="28" cy="-5" r="2" fill="#FFF" opacity="0.8"/>
+                            <circle cx="28" cy="5" r="2" fill="#e63946" opacity="0.8"/>
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- Hero Content -->
+                <div class="hero-content">
+                    <h1>FOUR WHEELS FOR YOU</h1>
+                    <p>Experience the Art of Precision Engineering</p>
+                    <button onclick="showSection('shop')">Explore Collection</button>
+                </div>
             </div>
 
             <div style="padding: 60px 40px; background: #0a0a0a;">
