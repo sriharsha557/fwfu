@@ -6,594 +6,18 @@
     <title>FWFU.in - Four Wheels For You | Premium Die-Cast Cars</title>
     <meta name="description" content="Discover the finest collection of premium die-cast miniature cars. Luxury models from Hot Wheels, Majorette, Bburago & more.">
     <link rel="icon" type="image/png" href="images/fwfu.png">
+    <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-    <style>
-        /* ========== GLOBAL STYLES ========== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #0a0a0a;
-            color: #e0e0e0;
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
-
-        /* ========== HEADER STYLES ========== */
-        header {
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(20px);
-            color: white;
-            padding: 1rem 0;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(201, 169, 97, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        header.scrolled {
-            padding: 0.7rem 0;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .header-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 40px;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            background: linear-gradient(135deg, #C9A961 0%, #F4D03F 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        nav {
-            display: flex;
-            gap: 2.5rem;
-            align-items: center;
-        }
-
-        nav a {
-            color: #e0e0e0;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            position: relative;
-        }
-
-        nav a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #C9A961, #F4D03F);
-            transition: width 0.3s ease;
-        }
-
-        nav a:hover::after {
-            width: 100%;
-        }
-
-        nav a:hover {
-            color: #F4D03F;
-        }
-
-        .cart-icon {
-            background: linear-gradient(135deg, #C9A961 0%, #D4AF37 100%);
-            padding: 0.6rem 1.4rem;
-            border-radius: 30px;
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-            color: white;
-        }
-
-        .cart-icon:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(201, 169, 97, 0.4);
-        }
-
-        .cart-icon::after {
-            display: none;
-        }
-
-        .cart-count {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #e63946;
-            color: white;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            font-weight: 700;
-            border: 2px solid #0a0a0a;
-        }
-
-        /* ========== MAIN CONTAINER ========== */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0;
-            margin-top: 80px;
-        }
-
-        /* ========== HERO SECTION WITH ANIME.JS ========== */
-        .hero {
-            min-height: 55vh;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 0;
-        }
-
-        .animation-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        .animation-container svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        .motion-path {
-            fill: none;
-            stroke: rgba(201, 169, 97, 0.08);
-            stroke-width: 2;
-            stroke-dasharray: 5, 5;
-        }
-
-        .car-svg {
-            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
-        }
-
-        .hero-content {
-            text-align: center;
-            position: relative;
-            z-index: 10;
-            max-width: 90%;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            color: #fff;
-            font-weight: 800;
-            text-shadow: 2px 4px 20px rgba(0, 0, 0, 0.8);
-            letter-spacing: 3px;
-            line-height: 1.2;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            color: #e0e0e0;
-            font-weight: 300;
-            letter-spacing: 1px;
-        }
-
-        .hero button {
-            background: linear-gradient(135deg, #C9A961 0%, #F4D03F 100%);
-            color: #0a0a0a;
-            border: none;
-            padding: 1.2rem 3rem;
-            font-size: 1rem;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            font-weight: 700;
-            box-shadow: 0 10px 40px rgba(201, 169, 97, 0.3);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .hero button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 50px rgba(201, 169, 97, 0.5);
-            background: linear-gradient(135deg, #F4D03F 0%, #C9A961 100%);
-        }
-
-        /* ========== SECTION STYLES ========== */
-        .section {
-            display: none;
-            background: #0a0a0a;
-            padding: 60px 40px;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        .section-title {
-            margin: 0 0 4rem;
-            text-align: center;
-            font-size: 3rem;
-            color: #F4D03F;
-            font-weight: 800;
-            position: relative;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .section-title::before {
-            content: '';
-            display: block;
-            width: 80px;
-            height: 4px;
-            background: linear-gradient(90deg, #C9A961, #F4D03F);
-            margin: 0 auto 2rem;
-            border-radius: 2px;
-        }
-
-        h1 {
-            margin-bottom: 3rem;
-            color: #F4D03F;
-            font-size: 2.5rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        /* ========== FEATURED PRODUCTS ========== */
-        .featured-section {
-            padding: 60px 40px;
-            background: #0a0a0a;
-        }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2.5rem;
-            margin-bottom: 3rem;
-        }
-
-        .product-card {
-            background: rgba(20, 20, 20, 0.6);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid rgba(201, 169, 97, 0.15);
-            transition: all 0.4s ease;
-            cursor: pointer;
-        }
-
-        .product-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(201, 169, 97, 0.4);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-        }
-
-        .product-image {
-            width: 100%;
-            height: 250px;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-            color: #333;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .product-image img {
-            transition: transform 0.4s ease;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .product-card:hover .product-image img {
-            transform: scale(1.1);
-        }
-
-        .product-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: linear-gradient(135deg, #C9A961, #F4D03F);
-            color: #0a0a0a;
-            padding: 0.4rem 1rem;
-            border-radius: 25px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .product-info {
-            padding: 2rem;
-        }
-
-        .product-brand {
-            color: #C9A961;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0.5rem;
-        }
-
-        .product-name {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin: 0.5rem 0;
-            color: #fff;
-        }
-
-        .product-details {
-            font-size: 0.9rem;
-            color: #999;
-            margin: 0.7rem 0;
-        }
-
-        .product-price {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #F4D03F;
-            margin: 1.5rem 0 1rem;
-        }
-
-        .product-price .original {
-            text-decoration: line-through;
-            color: #666;
-            font-size: 1.1rem;
-            margin-right: 0.8rem;
-            font-weight: 500;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #C9A961 0%, #D4AF37 100%);
-            color: #0a0a0a;
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-top: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(201, 169, 97, 0.4);
-            background: linear-gradient(135deg, #D4AF37 0%, #F4D03F 100%);
-        }
-
-        .btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            background: #333;
-            color: #666;
-        }
-
-        /* ========== TRUST INDICATORS ========== */
-        .trust-section {
-            background: rgba(20, 20, 20, 0.6);
-            padding: 4rem 2rem;
-            margin: 4rem 0;
-            border-radius: 20px;
-            border: 1px solid rgba(201, 169, 97, 0.2);
-        }
-
-        .trust-grid {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
-            text-align: center;
-        }
-
-        .trust-item {
-            padding: 0;
-        }
-
-        .trust-icon {
-            font-size: 3rem;
-            color: #F4D03F;
-            margin-bottom: 1rem;
-        }
-
-        .trust-title {
-            color: #F4D03F;
-            margin-bottom: 0.5rem;
-            font-size: 1.2rem;
-        }
-
-        .trust-description {
-            color: #999;
-            font-size: 0.95rem;
-        }
-
-        /* ========== EMPTY STATE ========== */
-        .empty-state {
-            text-align: center;
-            padding: 5rem 1rem;
-            color: #666;
-        }
-
-        .empty-state-icon {
-            font-size: 5rem;
-            margin-bottom: 2rem;
-            opacity: 0.3;
-        }
-
-        /* ========== FOOTER ========== */
-        footer {
-            background: rgba(10, 10, 10, 0.95);
-            color: white;
-            padding: 5rem 2rem 2rem;
-            margin-top: 6rem;
-            border-top: 1px solid rgba(201, 169, 97, 0.2);
-        }
-
-        .footer-container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
-            margin-bottom: 3rem;
-        }
-
-        .footer-section h4 {
-            margin-bottom: 1.5rem;
-            font-size: 1.1rem;
-            color: #F4D03F;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .footer-section ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .footer-section ul li {
-            margin-bottom: 0.8rem;
-        }
-
-        .footer-section a {
-            color: #ccc;
-            text-decoration: none;
-            opacity: 0.8;
-            transition: all 0.3s ease;
-        }
-
-        .footer-section a:hover {
-            opacity: 1;
-            color: #F4D03F;
-        }
-
-        .footer-bottom {
-            border-top: 1px solid rgba(201, 169, 97, 0.2);
-            padding-top: 2rem;
-            text-align: center;
-        }
-
-        .footer-bottom p {
-            margin: 0.8rem 0;
-            opacity: 0.6;
-            font-size: 0.9rem;
-        }
-
-        /* ========== RESPONSIVE ========== */
-        @media (max-width: 768px) {
-            .header-container {
-                padding: 0 20px;
-            }
-
-            nav {
-                gap: 1.5rem;
-                font-size: 0.85rem;
-            }
-
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .hero p {
-                font-size: 1rem;
-            }
-
-            .hero button {
-                padding: 0.9rem 2rem;
-                font-size: 0.85rem;
-            }
-
-            .section {
-                padding: 40px 20px;
-            }
-
-            .products-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-                gap: 1.5rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero h1 {
-                font-size: 1.5rem;
-            }
-
-            .hero button {
-                padding: 0.8rem 1.5rem;
-                font-size: 0.75rem;
-            }
-
-            .products-grid {
-                grid-template-columns: 1fr;
-            }
-
-            nav {
-                gap: 1rem;
-            }
-
-            .cart-icon {
-                padding: 0.5rem 1rem;
-                font-size: 0.85rem;
-            }
-        }
-    </style>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/build/es6/index.min.js"></script>
 </head>
 <body>
     <!-- HEADER -->
     <header id="mainHeader">
         <div class="header-container">
             <div class="header-left">
+                <div class="header-logo-img">
+                    <img src="images/fwfu.png" alt="FWFU Logo">
+                </div>
                 <div class="logo">FWFU.IN</div>
             </div>
             <nav>
@@ -603,95 +27,68 @@
                     🛒 Cart
                     <span class="cart-count" id="cartCount">0</span>
                 </a>
+                <a onclick="showSection('admin')">Admin</a>
             </nav>
         </div>
     </header>
 
     <div class="container">
-        <!-- HOME SECTION -->
-        <section id="home" class="section active">
-            <!-- HERO WITH ANIME.JS -->
-            <div class="hero">
-                <div class="animation-container">
-                    <svg viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice">
-                        <defs>
-                            <filter id="carShadow">
-                                <feDropShadow dx="2" dy="4" stdDeviation="3" flood-opacity="0.4"/>
-                            </filter>
-                        </defs>
-
-                        <!-- Motion Paths -->
-                        <path id="path1" class="motion-path" d="M 0,150 Q 300,50 600,150 T 1200,150"/>
-                        <path id="path2" class="motion-path" d="M 0,300 Q 300,450 600,300 T 1200,300"/>
-                        <path id="path3" class="motion-path" d="M 0,450 Q 300,200 600,450 T 1200,450"/>
-
-                        <!-- Car 1 -->
-                        <g class="car-svg" id="car1">
-                            <rect x="-25" y="-15" width="50" height="30" fill="#C9A961" rx="4"/>
-                            <rect x="-18" y="-22" width="36" height="10" fill="#C9A961" rx="2"/>
-                            <circle cx="-12" cy="15" r="5" fill="#333"/>
-                            <circle cx="12" cy="15" r="5" fill="#333"/>
-                            <rect x="-14" y="-20" width="8" height="6" fill="#87CEEB" opacity="0.7"/>
-                            <rect x="6" y="-20" width="8" height="6" fill="#87CEEB" opacity="0.7"/>
-                        </g>
-
-                        <!-- Car 2 -->
-                        <g class="car-svg" id="car2">
-                            <rect x="-25" y="-15" width="50" height="30" fill="#F4D03F" rx="4"/>
-                            <rect x="-18" y="-22" width="36" height="10" fill="#F4D03F" rx="2"/>
-                            <circle cx="-12" cy="15" r="5" fill="#333"/>
-                            <circle cx="12" cy="15" r="5" fill="#333"/>
-                            <rect x="-14" y="-20" width="8" height="6" fill="#87CEEB" opacity="0.7"/>
-                            <rect x="6" y="-20" width="8" height="6" fill="#87CEEB" opacity="0.7"/>
-                        </g>
-
-                        <!-- Car 3 -->
-                        <g class="car-svg" id="car3">
-                            <rect x="-25" y="-15" width="50" height="30" fill="#D4AF37" rx="4"/>
-                            <rect x="-18" y="-22" width="36" height="10" fill="#D4AF37" rx="2"/>
-                            <circle cx="-12" cy="15" r="5" fill="#333"/>
-                            <circle cx="12" cy="15" r="5" fill="#333"/>
-                            <rect x="-14" y="-20" width="8" height="6" fill="#87CEEB" opacity="0.7"/>
-                            <rect x="6" y="-20" width="8" height="6" fill="#87CEEB" opacity="0.7"/>
-                        </g>
-                    </svg>
-                </div>
-
-                <div class="hero-content">
-                    <h1>FOUR WHEELS FOR YOU</h1>
-                    <p>Experience the Art of Precision Engineering</p>
-                    <button onclick="showSection('shop')">Explore Collection</button>
+        <!-- ADMIN LOGIN SECTION -->
+        <section id="adminLogin" class="section">
+            <div class="login-container">
+                <div class="login-box">
+                    <h1>🔐 Admin Access</h1>
+                    <p>Enter your credentials to access the admin panel</p>
+                    
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="adminPassword" placeholder="Enter admin password" autofocus onkeypress="if(event.key==='Enter') adminLogin()">
+                    </div>
+                    
+                    <button class="btn" onclick="adminLogin()" style="margin-top: 1.5rem;">Login</button>
+                    
+                    <button class="btn btn-secondary" onclick="showSection('home')" style="margin-top: 0.5rem;">Back to Home</button>
+                    
+                    <p id="loginError" style="color: #e63946; margin-top: 1rem; text-align: center; display: none; font-weight: 600;"></p>
                 </div>
             </div>
+        </section>
 
-            <!-- FEATURED PRODUCTS -->
-            <div class="featured-section">
+        <!-- HOME SECTION -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <h1>FOUR WHEELS FOR YOU</h1>
+                <p>Experience the Art of Precision Engineering</p>
+                <button onclick="showSection('shop')">Explore Collection</button>
+            </div>
+
+            <div style="padding: 60px 40px; background: #0a0a0a;">
                 <h2 class="section-title">Featured Collection</h2>
                 <div class="products-grid" id="featuredProducts"></div>
             </div>
 
-            <!-- TRUST INDICATORS -->
-            <div class="trust-section">
-                <div class="trust-grid">
-                    <div class="trust-item">
-                        <div class="trust-icon">✓</div>
-                        <h3 class="trust-title">AUTHENTIC MODELS</h3>
-                        <p class="trust-description">100% genuine die-cast collectibles</p>
+            <!-- Trust Indicators -->
+            <div style="background: rgba(20, 20, 20, 0.6); padding: 4rem 2rem; margin: 4rem 0; border-radius: 20px; border: 1px solid rgba(201, 169, 97, 0.2);">
+                <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; text-align: center;">
+                    <div>
+                        <div style="font-size: 3rem; color: #F4D03F; margin-bottom: 1rem;">✓</div>
+                        <h3 style="color: #F4D03F; margin-bottom: 0.5rem; font-size: 1.2rem;">AUTHENTIC MODELS</h3>
+                        <p style="color: #999; font-size: 0.95rem;">100% genuine die-cast collectibles</p>
                     </div>
-                    <div class="trust-item">
-                        <div class="trust-icon">🚚</div>
-                        <h3 class="trust-title">EXPRESS DELIVERY</h3>
-                        <p class="trust-description">Fast & secure shipping nationwide</p>
+                    <div>
+                        <div style="font-size: 3rem; color: #F4D03F; margin-bottom: 1rem;">🚚</div>
+                        <h3 style="color: #F4D03F; margin-bottom: 0.5rem; font-size: 1.2rem;">EXPRESS DELIVERY</h3>
+                        <p style="color: #999; font-size: 0.95rem;">Fast & secure shipping nationwide</p>
                     </div>
-                    <div class="trust-item">
-                        <div class="trust-icon">💎</div>
-                        <h3 class="trust-title">PREMIUM QUALITY</h3>
-                        <p class="trust-description">Handpicked for perfection</p>
+                    <div>
+                        <div style="font-size: 3rem; color: #F4D03F; margin-bottom: 1rem;">💎</div>
+                        <h3 style="color: #F4D03F; margin-bottom: 0.5rem; font-size: 1.2rem;">PREMIUM QUALITY</h3>
+                        <p style="color: #999; font-size: 0.95rem;">Handpicked for perfection</p>
                     </div>
-                    <div class="trust-item">
-                        <div class="trust-icon">🛡️</div>
-                        <h3 class="trust-title">SECURE CHECKOUT</h3>
-                        <p class="trust-description">Safe & encrypted transactions</p>
+                    <div>
+                        <div style="font-size: 3rem; color: #F4D03F; margin-bottom: 1rem;">🛡️</div>
+                        <h3 style="color: #F4D03F; margin-bottom: 0.5rem; font-size: 1.2rem;">SECURE CHECKOUT</h3>
+                        <p style="color: #999; font-size: 0.95rem;">Safe & encrypted transactions</p>
                     </div>
                 </div>
             </div>
@@ -700,6 +97,54 @@
         <!-- SHOP SECTION -->
         <section id="shop" class="section">
             <h1>Our Premium Collection</h1>
+            
+            <div class="filters">
+                <div class="filter-group">
+                    <label>
+                        Brand
+                        <select id="filterBrand" onchange="applyFilters()">
+                            <option value="">All Brands</option>
+                            <option value="Hot Wheels">Hot Wheels</option>
+                            <option value="Majorette">Majorette</option>
+                            <option value="Bburago">Bburago</option>
+                            <option value="Siku">Siku</option>
+                        </select>
+                    </label>
+                    <label>
+                        Scale
+                        <select id="filterScale" onchange="applyFilters()">
+                            <option value="">All Scales</option>
+                            <option value="1:12">1:12</option>
+                            <option value="1:18">1:18</option>
+                            <option value="1:24">1:24</option>
+                            <option value="1:43">1:43</option>
+                        </select>
+                    </label>
+                    <label>
+                        Category
+                        <select id="filterCategory" onchange="applyFilters()">
+                            <option value="">All Categories</option>
+                            <option value="Sports">Sports</option>
+                            <option value="SUV">SUV</option>
+                            <option value="Classic">Classic</option>
+                            <option value="Truck">Truck</option>
+                        </select>
+                    </label>
+                    <label>
+                        Max Price (₹)
+                        <input type="number" id="filterPrice" placeholder="Enter amount" onchange="applyFilters()">
+                    </label>
+                    <label style="flex-direction: row; align-items: center; gap: 0.8rem;">
+                        <input type="checkbox" id="filterStock" onchange="applyFilters()">
+                        <span>In Stock Only</span>
+                    </label>
+                    <label style="flex-direction: row; align-items: center; gap: 0.8rem;">
+                        <input type="checkbox" id="filterSale" onchange="applyFilters()">
+                        <span>On Sale</span>
+                    </label>
+                </div>
+            </div>
+
             <div class="products-grid" id="productsGrid"></div>
         </section>
 
@@ -708,16 +153,148 @@
             <h1>Shopping Cart</h1>
             <div id="cartContent"></div>
         </section>
+
+        <!-- CHECKOUT SECTION -->
+        <section id="checkout" class="section">
+            <h1>Checkout</h1>
+            <div class="checkout-form">
+                <div class="summary" id="checkoutSummary"></div>
+                <div class="admin-form">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" id="checkoutName" placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number *</label>
+                        <input type="tel" id="checkoutPhone" placeholder="+91 XXXXX XXXXX">
+                    </div>
+                    <div class="form-group">
+                        <label>Shipping Address *</label>
+                        <textarea id="checkoutAddress" placeholder="Enter your complete delivery address with pincode"></textarea>
+                    </div>
+                </div>
+                <button class="btn" onclick="placeOrder()">Confirm Order via WhatsApp</button>
+                <button class="btn btn-secondary" onclick="showSection('cart')">Back to Cart</button>
+            </div>
+        </section>
+
+        <!-- ADMIN SECTION -->
+        <section id="admin" class="section">
+            <div class="admin-panel">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                    <h1 style="margin: 0;">Admin Dashboard</h1>
+                    <button class="btn btn-secondary" onclick="adminLogout()" style="max-width: 150px; margin: 0;">🔓 Logout</button>
+                </div>
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchAdminTab('products')">Manage Products</button>
+                    <button class="tab-btn" onclick="switchAdminTab('add')">Add New Product</button>
+                </div>
+
+                <div id="adminProducts">
+                    <h3 style="color: #F4D03F; margin-bottom: 1.5rem;">All Products</h3>
+                    <table class="admin-table" id="adminTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Brand</th>
+                                <th>Scale</th>
+                                <th>Price (₹)</th>
+                                <th>Sale Price (₹)</th>
+                                <th>Stock</th>
+                                <th>Sale</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody"></tbody>
+                    </table>
+                </div>
+
+                <div id="adminAdd" style="display:none;">
+                    <h3 style="color: #F4D03F; margin-bottom: 1.5rem;">Add New Product</h3>
+                    <div class="admin-form">
+                        <div class="form-group">
+                            <label>Product Name *</label>
+                            <input type="text" id="adminName" placeholder="e.g., Ferrari 488 GTB">
+                        </div>
+                        <div class="form-group">
+                            <label>Brand *</label>
+                            <select id="adminBrand">
+                                <option value="">Select Brand</option>
+                                <option value="Hot Wheels">Hot Wheels</option>
+                                <option value="Majorette">Majorette</option>
+                                <option value="Bburago">Bburago</option>
+                                <option value="Siku">Siku</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Scale *</label>
+                            <select id="adminScale">
+                                <option value="">Select Scale</option>
+                                <option value="1:12">1:12</option>
+                                <option value="1:18">1:18</option>
+                                <option value="1:24">1:24</option>
+                                <option value="1:43">1:43</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Category *</label>
+                            <select id="adminCategory">
+                                <option value="">Select Category</option>
+                                <option value="Sports">Sports</option>
+                                <option value="SUV">SUV</option>
+                                <option value="Classic">Classic</option>
+                                <option value="Truck">Truck</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Price (₹) *</label>
+                            <input type="number" id="adminPrice" placeholder="1500" min="0" step="10">
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="adminDescription" placeholder="Enter product description"></textarea>
+                        </div>
+                        <div class="form-group" style="flex-direction: row; align-items: center; gap: 1rem;">
+                            <input type="checkbox" id="adminInStock" checked style="width: 20px; height: 20px;">
+                            <label style="margin: 0;">In Stock</label>
+                        </div>
+                        <div class="form-group" style="flex-direction: row; align-items: center; gap: 1rem;">
+                            <input type="checkbox" id="adminOnSale" style="width: 20px; height: 20px;">
+                            <label style="margin: 0;">On Sale</label>
+                        </div>
+                        <div class="form-group" id="salePriceGroup" style="display:none;">
+                            <label>Sale Price (₹)</label>
+                            <input type="number" id="adminSalePrice" placeholder="Sale price" min="0" step="10">
+                        </div>
+                        <div class="form-group">
+                            <label>Product Image (JPG/PNG) *</label>
+                            <input type="file" id="productImage" accept="image/jpeg,image/png" required style="padding: 0.8rem; background: rgba(30, 30, 30, 0.8); color: #e0e0e0;">
+                            <small style="color: #999; margin-top: 0.5rem; display: block;">Recommended: 800x600px, max 5MB</small>
+                        </div>
+                        <button class="btn" onclick="addNewProduct()">Add Product</button>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 
     <!-- FOOTER -->
     <footer>
         <div class="footer-container">
             <div class="footer-grid">
+                <!-- Footer Logo Section -->
                 <div class="footer-section">
-                    <h4>FWFU.IN</h4>
+                    <div class="footer-logo-section">
+                        <div class="footer-logo-img">
+                            <img src="images/fwfu.png" alt="FWFU Logo">
+                        </div>
+                        <h3>FWFU.IN</h3>
+                    </div>
                     <p>Your destination for premium die-cast miniature cars. Precision, quality, and passion in every piece.</p>
                 </div>
+
+                <!-- Quick Links -->
                 <div class="footer-section">
                     <h4>Quick Links</h4>
                     <ul>
@@ -725,304 +302,46 @@
                         <li><a href="#" onclick="showSection('shop')">Collection</a></li>
                         <li><a href="#">About Us</a></li>
                         <li><a href="#">Contact</a></li>
+                        <li><a href="#">FAQ</a></li>
                     </ul>
                 </div>
+
+                <!-- Contact Info -->
                 <div class="footer-section">
                     <h4>Get In Touch</h4>
-                    <ul>
-                        <li>📧 info@fwfu.in</li>
-                        <li>📱 +91 XXXXXXXXXX</li>
+                    <ul class="contact-list">
+                        <li style="margin-bottom: 1rem;">📧 info@fwfu.in</li>
+                        <li style="margin-bottom: 1rem;">📱 +91 XXXXXXXXXX</li>
                         <li>📍 India</li>
                     </ul>
                 </div>
+
+                <!-- Social Links -->
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#" title="Facebook">f</a>
+                        <a href="#" title="Twitter">𝕏</a>
+                        <a href="#" title="Instagram">📷</a>
+                    </div>
+                </div>
             </div>
+
+            <!-- Footer Bottom -->
             <div class="footer-bottom">
                 <p>&copy; 2024 FWFU.in - Four Wheels For You. All rights reserved.</p>
+                <p>
+                    <a href="#">Privacy Policy</a> | 
+                    <a href="#">Terms & Conditions</a> | 
+                    <a href="#">Shipping Policy</a>
+                </p>
             </div>
         </div>
     </footer>
 
+    <script src="js/app.js"></script>
     <script>
-        // ========== CONFIGURATION ==========
-        const TELEGRAM_BOT_TOKEN = '8291385334:AAFJUkSVHfMw2VoXSHJvke1Ho9KEpswlDMw';
-        const TELEGRAM_CHAT_ID = '5616171390';
-
-        // Global State
-        let products = [];
-        let cart = [];
-
-        // ========== INITIALIZATION ==========
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('📄 DOM Loaded');
-            init();
-        });
-
-        async function init() {
-            try {
-                loadCart();
-                updateCartCount();
-                initializeDefaultProducts();
-                renderFeaturedProducts();
-                renderProducts();
-                console.log('✅ App initialized');
-            } catch (error) {
-                console.error('❌ Init error:', error);
-            }
-        }
-
-        // ========== NAVIGATION ==========
-        function showSection(id) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-
-            if (id === 'shop') renderProducts();
-            if (id === 'cart') renderCart();
-
-            window.scrollTo(0, 0);
-        }
-
-        // ========== DEFAULT PRODUCTS ==========
-        function initializeDefaultProducts() {
-            products = [
-                {
-                    id: 1, name: "Ferrari 488", brand: "Hot Wheels", scale: "1:18",
-                    category: "Sports", price: 2500, image_url: null,
-                    in_stock: true, on_sale: true, sale_price: 1999
-                },
-                {
-                    id: 2, name: "BMW M3", brand: "Majorette", scale: "1:24",
-                    category: "Sports", price: 1500, image_url: null,
-                    in_stock: true, on_sale: false, sale_price: null
-                },
-                {
-                    id: 3, name: "Ford Mustang", brand: "Bburago", scale: "1:43",
-                    category: "Classic", price: 800, image_url: null,
-                    in_stock: true, on_sale: true, sale_price: 599
-                }
-            ];
-        }
-
-        // ========== RENDER PRODUCTS ==========
-        function renderProducts(filtered = null) {
-            const grid = document.getElementById('productsGrid');
-            const displayProducts = filtered || products;
-
-            if (displayProducts.length === 0) {
-                grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;"><p>No products found</p></div>';
-                return;
-            }
-
-            grid.innerHTML = displayProducts.map(p => `
-                <div class="product-card">
-                    <div class="product-image">
-                        ${p.image_url ? `<img src="${p.image_url}" alt="${p.name}">` : '<div style="display:flex; align-items:center; justify-content:center; font-size:3rem;">🚗</div>'}
-                        ${p.on_sale ? '<div class="product-badge">SALE</div>' : ''}
-                        ${!p.in_stock ? '<div class="product-badge" style="background: #999;">OUT OF STOCK</div>' : ''}
-                    </div>
-                    <div class="product-info">
-                        <div class="product-brand">${p.brand}</div>
-                        <div class="product-name">${p.name}</div>
-                        <div class="product-details">${p.scale} Scale • ${p.category}</div>
-                        <div class="product-price">
-                            ${p.on_sale ? `<span class="original">₹${p.price}</span>₹${p.sale_price}` : `₹${p.price}`}
-                        </div>
-                        <button class="btn" ${!p.in_stock ? 'disabled' : ''} onclick="addToCart(${p.id})">
-                            ${p.in_stock ? 'Add to Cart' : 'Out of Stock'}
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderFeaturedProducts() {
-            const featured = products.slice(0, 3);
-            const grid = document.getElementById('featuredProducts');
-
-            if (featured.length === 0) {
-                grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No featured products</p>';
-                return;
-            }
-
-            grid.innerHTML = featured.map(p => `
-                <div class="product-card">
-                    <div class="product-image">
-                        ${p.image_url ? `<img src="${p.image_url}" alt="${p.name}">` : '<div style="display:flex; align-items:center; justify-content:center; font-size:3rem;">🚗</div>'}
-                        ${p.on_sale ? '<div class="product-badge">SALE</div>' : ''}
-                    </div>
-                    <div class="product-info">
-                        <div class="product-brand">${p.brand}</div>
-                        <div class="product-name">${p.name}</div>
-                        <div class="product-details">${p.scale} • ${p.category}</div>
-                        <div class="product-price">
-                            ${p.on_sale ? `<span class="original">₹${p.price}</span>₹${p.sale_price}` : `₹${p.price}`}
-                        </div>
-                        <button class="btn" onclick="addToCart(${p.id}); showSection('shop')">Add to Cart</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // ========== CART ==========
-        function addToCart(productId) {
-            const product = products.find(p => p.id === productId);
-            if (product && product.in_stock) {
-                cart.push({...product});
-                saveCart();
-                updateCartCount();
-                alert(`${product.name} added to cart!`);
-            }
-        }
-
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            saveCart();
-            updateCartCount();
-            renderCart();
-        }
-
-        function saveCart() {
-            localStorage.setItem('fwfu_cart', JSON.stringify(cart));
-        }
-
-        function loadCart() {
-            const saved = localStorage.getItem('fwfu_cart');
-            cart = saved ? JSON.parse(saved) : [];
-        }
-
-        function updateCartCount() {
-            document.getElementById('cartCount').textContent = cart.length;
-        }
-
-        function renderCart() {
-            const content = document.getElementById('cartContent');
-
-            if (cart.length === 0) {
-                content.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🛒</div><p>Your cart is empty</p><button class="btn" style="max-width: 200px; margin-top: 1rem;" onclick="showSection(\'shop\')">Continue Shopping</button></div>';
-                return;
-            }
-
-            const total = cart.reduce((sum, item) => sum + (item.on_sale ? item.sale_price : item.price), 0);
-
-            content.innerHTML = `
-                <table class="cart-table" style="width: 100%; border-collapse: collapse; background: rgba(20, 20, 20, 0.8); border-radius: 20px; overflow: hidden; margin-bottom: 2rem;">
-                    <thead>
-                        <tr style="background: linear-gradient(135deg, #C9A961 0%, #D4AF37 100%);">
-                            <th style="padding: 1.5rem; text-align: left; font-weight: 700; color: #0a0a0a;">Product</th>
-                            <th style="padding: 1.5rem; color: #0a0a0a;">Scale</th>
-                            <th style="padding: 1.5rem; color: #0a0a0a;">Price</th>
-                            <th style="padding: 1.5rem; color: #0a0a0a;">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${cart.map((item, idx) => `
-                            <tr style="border-bottom: 1px solid rgba(201, 169, 97, 0.1);">
-                                <td style="padding: 1.5rem; color: #e0e0e0;">${item.name} (${item.brand})</td>
-                                <td style="padding: 1.5rem; color: #e0e0e0;">${item.scale}</td>
-                                <td style="padding: 1.5rem; color: #e0e0e0;">₹${item.on_sale ? item.sale_price : item.price}</td>
-                                <td style="padding: 1.5rem;">
-                                    <button class="btn" style="width: auto; background: #e63946; max-width: 120px;" onclick="removeFromCart(${idx})">Remove</button>
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-                <div style="background: rgba(30, 30, 30, 0.6); padding: 2rem; border-radius: 15px; margin: 2rem 0; border: 1px solid rgba(201, 169, 97, 0.15);">
-                    <div style="display: flex; justify-content: space-between; font-size: 1.8rem; font-weight: 800; color: #F4D03F; border-top: 2px solid rgba(201, 169, 97, 0.3); padding-top: 1.5rem; margin-top: 1.5rem;">
-                        <span>Total:</span>
-                        <span>₹${total}</span>
-                    </div>
-                </div>
-                <button class="btn" onclick="checkout()" style="margin-top: 1.5rem; max-width: 300px;">Proceed to Checkout</button>
-                <button class="btn" style="margin-top: 1rem; max-width: 300px; background: rgba(50, 50, 50, 0.8); color: #e0e0e0; border: 1px solid rgba(201, 169, 97, 0.3);" onclick="showSection('shop')">Continue Shopping</button>
-            `;
-        }
-
-        // ========== CHECKOUT ==========
-        function checkout() {
-            const name = prompt('Enter your full name:');
-            if (!name) return;
-
-            const phone = prompt('Enter your phone number:');
-            if (!phone) return;
-
-            const address = prompt('Enter your delivery address:');
-            if (!address) return;
-
-            const total = cart.reduce((sum, item) => sum + (item.on_sale ? item.sale_price : item.price), 0);
-
-            const orderData = {
-                name, phone, address, total,
-                items: cart,
-                orderTime: new Date().toLocaleString('en-IN'),
-                orderId: 'ORD-' + Date.now()
-            };
-
-            sendOrderToTelegram(orderData).then(success => {
-                if (success) {
-                    alert('✅ Order submitted!\n✅ Notification sent to admin via Telegram');
-                    cart = [];
-                    saveCart();
-                    updateCartCount();
-                    showSection('home');
-                } else {
-                    alert('⚠️ Order received but notification failed.');
-                }
-            });
-        }
-
-        // ========== TELEGRAM NOTIFICATION ==========
-        async function sendOrderToTelegram(orderData) {
-            try {
-                console.log('📤 Sending to Telegram...');
-
-                const itemsList = orderData.items
-                    .map((item) => {
-                        const price = item.on_sale ? item.sale_price : item.price;
-                        const productLink = `https://fwfu.in`;
-                        return `• <a href="${productLink}">${item.name}</a> (${item.scale}) - ₹${price}`;
-                    })
-                    .join('\n');
-
-                const message = `🛒 <b>NEW ORDER RECEIVED</b>\n\n` +
-                    `<b>Order ID:</b> <code>${orderData.orderId}</code>\n` +
-                    `<b>Customer Name:</b> ${orderData.name}\n` +
-                    `<b>Phone:</b> ${orderData.phone}\n` +
-                    `<b>Address:</b> ${orderData.address}\n\n` +
-                    `<b>📦 Items:</b>\n${itemsList}\n\n` +
-                    `<b>💰 Total Amount: ₹${orderData.total}</b>\n` +
-                    `<b>⏰ Order Time:</b> ${orderData.orderTime}`;
-
-                const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        chat_id: TELEGRAM_CHAT_ID,
-                        text: message,
-                        parse_mode: 'HTML'
-                    })
-                });
-
-                const result = await response.json();
-
-                if (result.ok) {
-                    console.log('✅ Telegram notification sent successfully!');
-                    return true;
-                } else {
-                    console.error('❌ Telegram API Error:', result.description);
-                    return false;
-                }
-
-            } catch (error) {
-                console.error('❌ Telegram request error:', error);
-                return false;
-            }
-        }
-
-        // ========== HEADER SCROLL EFFECT ==========
+        // Add scroll effect to header
         window.addEventListener('scroll', function() {
             const header = document.getElementById('mainHeader');
             if (window.scrollY > 50) {
@@ -1030,77 +349,6 @@
             } else {
                 header.classList.remove('scrolled');
             }
-        });
-
-        // ========== ANIME.JS HERO ANIMATIONS ==========
-        // Car 1 - Top curve
-        anime({
-            targets: '#car1',
-            translateX: [
-                { value: anime.path('#path1'), duration: 6000 }
-            ],
-            rotate: 360,
-            opacity: [
-                { value: 0.3, duration: 500, delay: 0 },
-                { value: 1, duration: 500, delay: 500 },
-                { value: 0.3, duration: 500, delay: 5000 }
-            ],
-            easing: 'linear',
-            loop: true,
-            duration: 6000
-        });
-
-        // Car 2 - Middle curve
-        anime({
-            targets: '#car2',
-            translateX: [
-                { value: anime.path('#path2'), duration: 7000 }
-            ],
-            rotate: -360,
-            opacity: [
-                { value: 0.3, duration: 500, delay: 1000 },
-                { value: 1, duration: 500, delay: 1500 },
-                { value: 0.3, duration: 500, delay: 5500 }
-            ],
-            easing: 'linear',
-            loop: true,
-            duration: 7000,
-            delay: 1000
-        });
-
-        // Car 3 - Bottom curve
-        anime({
-            targets: '#car3',
-            translateX: [
-                { value: anime.path('#path3'), duration: 8000 }
-            ],
-            rotate: 360,
-            opacity: [
-                { value: 0.3, duration: 500, delay: 1500 },
-                { value: 1, duration: 500, delay: 2000 },
-                { value: 0.3, duration: 500, delay: 6000 }
-            ],
-            easing: 'linear',
-            loop: true,
-            duration: 8000,
-            delay: 500
-        });
-
-        // Pulse effect on hero title
-        anime({
-            targets: '.hero h1',
-            scale: [
-                { value: 1.05, duration: 600, delay: 0 },
-                { value: 1, duration: 600, delay: 600 }
-            ],
-            opacity: [
-                { value: 0.8, duration: 600 },
-                { value: 1, duration: 600 }
-            ],
-            easing: 'easeInOutQuad',
-            loop: true,
-            duration: 3000,
-            delay: 500
         });
     </script>
 </body>
