@@ -629,3 +629,40 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+
+// ========== HERO CAR ANIMATION ==========
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if anime is loaded and hero animation exists
+    if (typeof anime !== 'undefined' && document.querySelector('.hero-animation')) {
+        initHeroAnimation();
+    }
+});
+
+function initHeroAnimation() {
+    const path = document.querySelector('#motionPath');
+    const car = document.querySelector('.car');
+    
+    if (!path || !car) return;
+
+    // Create motion path animation for the car
+    const carAnimation = anime({
+        targets: car,
+        translateX: anime.path('#motionPath')('x'),
+        translateY: anime.path('#motionPath')('y'),
+        rotate: anime.path('#motionPath')('angle'),
+        easing: 'linear',
+        duration: 8000,
+        loop: true
+    });
+
+    // Animate the path drawing (optional visual effect)
+    anime({
+        targets: '#motionPath',
+        strokeDashoffset: [anime.setDashoffset, 0],
+        easing: 'linear',
+        duration: 8000,
+        loop: true,
+        direction: 'alternate'
+    });
+}
