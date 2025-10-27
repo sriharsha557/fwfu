@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FWFU - Four Wheels For You</title>
+    <title>FWFU.in - Four Wheels For You | Premium Die-Cast Cars</title>
+    <meta name="description" content="Discover the finest collection of premium die-cast miniature cars. Luxury models from Hot Wheels, Majorette, Bburago & more.">
     <link rel="icon" type="image/png" href="images/fwfu-logo.png">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -11,17 +12,17 @@
 </head>
 <body>
     <!-- HEADER -->
-    <header>
+    <header id="mainHeader">
         <div class="header-container">
             <div class="header-left">
                 <div class="header-logo-img">
-                    <img src="images/fwfu.png" alt="FWFU Logo">
+                    <img src="images/fwfu-logo.png" alt="FWFU Logo">
                 </div>
-                <div class="logo">FWFU.in</div>
+                <div class="logo">FWFU.IN</div>
             </div>
             <nav>
                 <a onclick="showSection('home')">Home</a>
-                <a onclick="showSection('shop')">Shop</a>
+                <a onclick="showSection('shop')">Collection</a>
                 <a onclick="showSection('cart')" class="cart-icon">
                     🛒 Cart
                     <span class="cart-count" id="cartCount">0</span>
@@ -36,8 +37,8 @@
         <section id="adminLogin" class="section">
             <div class="login-container">
                 <div class="login-box">
-                    <h1>🔐 Admin Login</h1>
-                    <p>Enter password to access admin panel</p>
+                    <h1>🔐 Admin Access</h1>
+                    <p>Enter your credentials to access the admin panel</p>
                     
                     <div class="form-group">
                         <label>Password</label>
@@ -48,7 +49,7 @@
                     
                     <button class="btn btn-secondary" onclick="showSection('home')" style="margin-top: 0.5rem;">Back to Home</button>
                     
-                    <p id="loginError" style="color: #C9A961; margin-top: 1rem; text-align: center; display: none; font-weight: 600;"></p>
+                    <p id="loginError" style="color: #e63946; margin-top: 1rem; text-align: center; display: none; font-weight: 600;"></p>
                 </div>
             </div>
         </section>
@@ -56,17 +57,46 @@
         <!-- HOME SECTION -->
         <section id="home" class="section active">
             <div class="hero">
-                <h1>Discover the finest collection of miniature cars</h1>
-                <button onclick="showSection('shop')">Start Shopping</button>
+                <h1>FOUR WHEELS FOR YOU</h1>
+                <p>Experience the Art of Precision Engineering</p>
+                <button onclick="showSection('shop')">Explore Collection</button>
             </div>
 
-            <h2 class="section-title">✨ Featured Collections</h2>
-            <div class="products-grid" id="featuredProducts"></div>
+            <div style="padding: 60px 40px; background: #0a0a0a;">
+                <h2 class="section-title">Featured Collection</h2>
+                <div class="products-grid" id="featuredProducts"></div>
+            </div>
+
+            <!-- Trust Indicators -->
+            <div style="background: rgba(20, 20, 20, 0.6); padding: 4rem 2rem; margin: 4rem 0; border-radius: 20px; border: 1px solid rgba(201, 169, 97, 0.2);">
+                <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; text-align: center;">
+                    <div>
+                        <div style="font-size: 3rem; color: #F4D03F; margin-bottom: 1rem;">✓</div>
+                        <h3 style="color: #F4D03F; margin-bottom: 0.5rem; font-size: 1.2rem;">AUTHENTIC MODELS</h3>
+                        <p style="color: #999; font-size: 0.95rem;">100% genuine die-cast collectibles</p>
+                    </div>
+                    <div>
+                        <div style="font-size: 3rem; color: #F4D03F; margin-bottom: 1rem;">🚚</div>
+                        <h3 style="color: #F4D03F; margin-bottom: 0.5rem; font-size: 1.2rem;">EXPRESS DELIVERY</h3>
+                        <p style="color: #999; font-size: 0.95rem;">Fast & secure shipping nationwide</p>
+                    </div>
+                    <div>
+                        <div style="font-size: 3rem; color: #F4D03F; margin-bottom: 1rem;">💎</div>
+                        <h3 style="color: #F4D03F; margin-bottom: 0.5rem; font-size: 1.2rem;">PREMIUM QUALITY</h3>
+                        <p style="color: #999; font-size: 0.95rem;">Handpicked for perfection</p>
+                    </div>
+                    <div>
+                        <div style="font-size: 3rem; color: #F4D03F; margin-bottom: 1rem;">🛡️</div>
+                        <h3 style="color: #F4D03F; margin-bottom: 0.5rem; font-size: 1.2rem;">SECURE CHECKOUT</h3>
+                        <p style="color: #999; font-size: 0.95rem;">Safe & encrypted transactions</p>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- SHOP SECTION -->
         <section id="shop" class="section">
-            <h1>Our Collection</h1>
+            <h1>Our Premium Collection</h1>
             
             <div class="filters">
                 <div class="filter-group">
@@ -75,7 +105,6 @@
                         <select id="filterBrand" onchange="applyFilters()">
                             <option value="">All Brands</option>
                             <option value="Hot Wheels">Hot Wheels</option>
-                            <option value="Joy Junction">Joy Junction</option>
                             <option value="Majorette">Majorette</option>
                             <option value="Bburago">Bburago</option>
                             <option value="Siku">Siku</option>
@@ -102,14 +131,16 @@
                         </select>
                     </label>
                     <label>
-                        Price Range (₹)
-                        <input type="number" id="filterPrice" placeholder="Max price" onchange="applyFilters()">
+                        Max Price (₹)
+                        <input type="number" id="filterPrice" placeholder="Enter amount" onchange="applyFilters()">
                     </label>
-                    <label>
-                        <input type="checkbox" id="filterStock" onchange="applyFilters()"> In Stock Only
+                    <label style="flex-direction: row; align-items: center; gap: 0.8rem;">
+                        <input type="checkbox" id="filterStock" onchange="applyFilters()">
+                        <span>In Stock Only</span>
                     </label>
-                    <label>
-                        <input type="checkbox" id="filterSale" onchange="applyFilters()"> On Sale
+                    <label style="flex-direction: row; align-items: center; gap: 0.8rem;">
+                        <input type="checkbox" id="filterSale" onchange="applyFilters()">
+                        <span>On Sale</span>
                     </label>
                 </div>
             </div>
@@ -130,19 +161,19 @@
                 <div class="summary" id="checkoutSummary"></div>
                 <div class="admin-form">
                     <div class="form-group">
-                        <label>Name *</label>
-                        <input type="text" id="checkoutName" placeholder="Your name">
+                        <label>Full Name *</label>
+                        <input type="text" id="checkoutName" placeholder="Enter your full name">
                     </div>
                     <div class="form-group">
-                        <label>Phone *</label>
-                        <input type="tel" id="checkoutPhone" placeholder="Your phone number">
+                        <label>Phone Number *</label>
+                        <input type="tel" id="checkoutPhone" placeholder="+91 XXXXX XXXXX">
                     </div>
                     <div class="form-group">
                         <label>Shipping Address *</label>
-                        <textarea id="checkoutAddress" placeholder="Your complete address"></textarea>
+                        <textarea id="checkoutAddress" placeholder="Enter your complete delivery address with pincode"></textarea>
                     </div>
                 </div>
-                <button class="btn" onclick="placeOrder()">Confirm via WhatsApp</button>
+                <button class="btn" onclick="placeOrder()">Confirm Order via WhatsApp</button>
                 <button class="btn btn-secondary" onclick="showSection('cart')">Back to Cart</button>
             </div>
         </section>
@@ -151,7 +182,7 @@
         <section id="admin" class="section">
             <div class="admin-panel">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
-                    <h1 style="margin: 0;">Admin Panel</h1>
+                    <h1 style="margin: 0;">Admin Dashboard</h1>
                     <button class="btn btn-secondary" onclick="adminLogout()" style="max-width: 150px; margin: 0;">🔓 Logout</button>
                 </div>
                 <div class="tabs">
@@ -160,7 +191,7 @@
                 </div>
 
                 <div id="adminProducts">
-                    <h3>All Products</h3>
+                    <h3 style="color: #F4D03F; margin-bottom: 1.5rem;">All Products</h3>
                     <table class="admin-table" id="adminTable">
                         <thead>
                             <tr>
@@ -180,18 +211,17 @@
                 </div>
 
                 <div id="adminAdd" style="display:none;">
-                    <h3>Add New Product</h3>
+                    <h3 style="color: #F4D03F; margin-bottom: 1.5rem;">Add New Product</h3>
                     <div class="admin-form">
                         <div class="form-group">
                             <label>Product Name *</label>
-                            <input type="text" id="adminName" placeholder="e.g., Ferrari 488">
+                            <input type="text" id="adminName" placeholder="e.g., Ferrari 488 GTB">
                         </div>
                         <div class="form-group">
                             <label>Brand *</label>
                             <select id="adminBrand">
                                 <option value="">Select Brand</option>
                                 <option value="Hot Wheels">Hot Wheels</option>
-                                <option value="Joy Junction">Joy Junction</option>
                                 <option value="Majorette">Majorette</option>
                                 <option value="Bburago">Bburago</option>
                                 <option value="Siku">Siku</option>
@@ -223,26 +253,24 @@
                         </div>
                         <div class="form-group">
                             <label>Description</label>
-                            <textarea id="adminDescription" placeholder="Product description"></textarea>
+                            <textarea id="adminDescription" placeholder="Enter product description"></textarea>
                         </div>
-                        <div class="form-group">
-                            <label>
-                                <input type="checkbox" id="adminInStock" checked> In Stock
-                            </label>
+                        <div class="form-group" style="flex-direction: row; align-items: center; gap: 1rem;">
+                            <input type="checkbox" id="adminInStock" checked style="width: 20px; height: 20px;">
+                            <label style="margin: 0;">In Stock</label>
                         </div>
-                        <div class="form-group">
-                            <label>
-                                <input type="checkbox" id="adminOnSale"> On Sale
-                            </label>
+                        <div class="form-group" style="flex-direction: row; align-items: center; gap: 1rem;">
+                            <input type="checkbox" id="adminOnSale" style="width: 20px; height: 20px;">
+                            <label style="margin: 0;">On Sale</label>
                         </div>
                         <div class="form-group" id="salePriceGroup" style="display:none;">
                             <label>Sale Price (₹)</label>
                             <input type="number" id="adminSalePrice" placeholder="Sale price" min="0" step="10">
                         </div>
                         <div class="form-group">
-                            <label>Product Image (JPG/PNG)</label>
-                            <input type="file" id="productImage" accept="image/jpeg,image/png" required>
-                            <small style="color: #999;">Recommended: 800x600px, max 5MB</small>
+                            <label>Product Image (JPG/PNG) *</label>
+                            <input type="file" id="productImage" accept="image/jpeg,image/png" required style="padding: 0.8rem; background: rgba(30, 30, 30, 0.8); color: #e0e0e0;">
+                            <small style="color: #999; margin-top: 0.5rem; display: block;">Recommended: 800x600px, max 5MB</small>
                         </div>
                         <button class="btn" onclick="addNewProduct()">Add Product</button>
                     </div>
@@ -259,18 +287,19 @@
                 <div class="footer-section">
                     <div class="footer-logo-section">
                         <div class="footer-logo-img">
-                            <img src="images/fwfu.png" alt="FWFU Logo" style="width: 100%; height: 100%; object-fit: contain; padding: 5px;">
+                            <img src="images/fwfu-logo.png" alt="FWFU Logo">
                         </div>
-                        <h3>FWFU.in</h3>
+                        <h3>FWFU.IN</h3>
                     </div>
-                    <p>Your destination for premium miniature cars</p>
+                    <p>Your destination for premium die-cast miniature cars. Precision, quality, and passion in every piece.</p>
                 </div>
 
                 <!-- Quick Links -->
                 <div class="footer-section">
                     <h4>Quick Links</h4>
                     <ul>
-                        <li><a href="#" onclick="showSection('shop')">Shop</a></li>
+                        <li><a href="#" onclick="showSection('home')">Home</a></li>
+                        <li><a href="#" onclick="showSection('shop')">Collection</a></li>
                         <li><a href="#">About Us</a></li>
                         <li><a href="#">Contact</a></li>
                         <li><a href="#">FAQ</a></li>
@@ -279,11 +308,11 @@
 
                 <!-- Contact Info -->
                 <div class="footer-section">
-                    <h4>Contact Us</h4>
+                    <h4>Get In Touch</h4>
                     <ul class="contact-list">
-                        <li>📧 info@fwfu.in</li>
-                        <li>📱 +91 XXXXXXXXXX</li>
-                        <li>📍 Your Location</li>
+                        <li style="margin-bottom: 1rem;">📧 info@fwfu.in</li>
+                        <li style="margin-bottom: 1rem;">📱 +91 XXXXXXXXXX</li>
+                        <li>📍 India</li>
                     </ul>
                 </div>
 
@@ -291,9 +320,9 @@
                 <div class="footer-section">
                     <h4>Follow Us</h4>
                     <div class="social-links">
-                        <a href="#">f</a>
-                        <a href="#">𝕏</a>
-                        <a href="#">📷</a>
+                        <a href="#" title="Facebook">f</a>
+                        <a href="#" title="Twitter">𝕏</a>
+                        <a href="#" title="Instagram">📷</a>
                     </div>
                 </div>
             </div>
@@ -303,12 +332,24 @@
                 <p>&copy; 2024 FWFU.in - Four Wheels For You. All rights reserved.</p>
                 <p>
                     <a href="#">Privacy Policy</a> | 
-                    <a href="#">Terms & Conditions</a>
+                    <a href="#">Terms & Conditions</a> | 
+                    <a href="#">Shipping Policy</a>
                 </p>
             </div>
         </div>
     </footer>
 
     <script src="js/app.js"></script>
+    <script>
+        // Add scroll effect to header
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('mainHeader');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
 </body>
 </html>
