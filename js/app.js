@@ -1,11 +1,11 @@
 // ========== CONFIGURATION ==========
 const SUPABASE_URL = 'https://fxwdnjgecqswhypelmet.supabase.co';
-const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4d2RuamdlY3Fzd2h5cGVsbWV0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTQ5MTEyOSwiZXhwIjoyMDc3MDY3MTI5fQ.yMClkljE0XeBVBM4xobYlrwNcy69ROgSlm8RLIJYCCs'; // Replace with your key
+const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4d2RuamdlY3Fzd2h5cGVsbWV0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTQ5MTEyOSwiZXhwIjoyMDc3MDY3MTI5fQ.yMClkljE0XeBVBM4xobYlrwNcy69ROgSlm8RLIJYCCs';
 const BUCKET_NAME = 'product-images';
 
-// Telegram
+// Telegram - Bot: @Fwfu_order_bot
 const TELEGRAM_BOT_TOKEN = '8291385334:AAFJUkSVHfMw2VoXSHJvke1Ho9KEpswlDMw';
-const TELEGRAM_CHAT_ID = '5616171390';
+const TELEGRAM_CHAT_ID = '5616171390'; // ⚠️ UPDATE THIS WITH YOUR ACTUAL CHAT ID
 
 // EmailJS
 const EMAILJS_SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';
@@ -13,8 +13,7 @@ const EMAILJS_TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';
 const EMAILJS_PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
 
 // Admin
-const ADMIN_EMAIL = 'your-email@toykoo.in';
-const ADMIN_PASSWORD = 'toykoo123'; // ⚠️ CHANGE THIS!
+const ADMIN_PASSWORD = 'toykoo123';
 const SESSION_TIMEOUT = 60 * 60 * 1000; // 1 hour
 
 // Initialize Supabase
@@ -34,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function init() {
     try {
-        console.log('🔄 Initializing app...');
+        console.log('📄 Initializing app...');
         loadCart();
         updateCartCount();
         
@@ -132,7 +131,7 @@ function showSection(id) {
 // ========== FETCH PRODUCTS ==========
 async function fetchProductsFromSupabase() {
     try {
-        console.log('🔄 Fetching from Supabase...');
+        console.log('📄 Fetching from Supabase...');
         
         const { data, error } = await supabase
             .from('products')
@@ -336,12 +335,12 @@ function placeOrder() {
     const address = document.getElementById('checkoutAddress').value.trim();
 
     if (!name || !phone || !address) {
-        alert('Please fill all fields');
+        alert('❌ Please fill all fields');
         return;
     }
 
     if (cart.length === 0) {
-        alert('Your cart is empty');
+        alert('❌ Your cart is empty');
         return;
     }
 
@@ -354,108 +353,148 @@ function placeOrder() {
         orderId: 'ORD-' + Date.now()
     };
 
+    console.log('📋 Order Data:', orderData);
+
     const button = event.target;
     button.disabled = true;
     button.textContent = 'Processing...';
 
-    Promise.all([
-        sendOrderToTelegram(orderData),
-        sendOrderEmail(orderData)
-    ]).then(() => {
-        alert('✅ Order submitted!\nAdmin notified via Telegram & Email');
-        cart = [];
-        saveCart();
-        updateCartCount();
-        document.getElementById('checkoutName').value = '';
-        document.getElementById('checkoutPhone').value = '';
-        document.getElementById('checkoutAddress').value = '';
-        button.disabled = false;
-        button.textContent = 'Confirm Order';
-        setTimeout(() => showSection('home'), 1500);
-    }).catch(error => {
-        console.error('Error:', error);
-        alert('⚠️ Order received but notification failed');
-        button.disabled = false;
-        button.textContent = 'Confirm Order';
-    });
+    sendOrderToTelegram(orderData)
+        .then(success => {
+            if (success) {
+                alert('✅ Order submitted!\n✅ Notification sent to admin via Telegram');
+            } else {
+                alert('⚠️ Order submitted but Telegram notification failed.\nPlease contact admin directly.');
+            }
+            
+            cart = [];
+            saveCart();
+            updateCartCount();
+            document.getElementById('checkoutName').value = '';
+            document.getElementById('checkoutPhone').value = '';
+            document.getElementById('checkoutAddress').value = '';
+            button.disabled = false;
+            button.textContent = 'Confirm Order';
+            
+            setTimeout(() => showSection('home'), 2000);
+        })
+        .catch(error => {
+            console.error('Error placing order:', error);
+            alert('❌ Error placing order: ' + error.message);
+            button.disabled = false;
+            button.textContent = 'Confirm Order';
+        });
 }
 
-// ========== NOTIFICATIONS ==========
-// ========== FIXED TELEGRAM NOTIFICATION ==========
+// ========== TELEGRAM NOTIFICATION ==========
 async function sendOrderToTelegram(orderData) {
     try {
-        console.log('📤 Sending to Telegram...');
-        console.log('Bot Token:', TELEGRAM_BOT_TOKEN ? 'Set' : 'Not Set');
-        console.log('Chat ID:', TELEGRAM_CHAT_ID ? 'Set' : 'Not Set');
+        console.log('📤 Preparing Telegram notification...');
         
-        // Check if credentials are properly configured
-        if (TELEGRAM_BOT_TOKEN.includes('YOUR_') || TELEGRAM_CHAT_ID.includes('YOUR_')) {
-            console.warn('⚠️ Telegram credentials not configured');
+        const botToken = TELEGRAM_BOT_TOKEN;
+        const chatId = TELEGRAM_CHAT_ID;
+        
+        if (!botToken || botToken.includes('YOUR_') || !chatId || chatId.includes('YOUR_')) {
+            console.warn('⚠️ Telegram credentials are not configured properly');
             return false;
         }
         
         const itemsList = orderData.items
-            .map(item => `• ${item.name} (${item.scale}) - ₹${item.on_sale ? item.sale_price : item.price}`)
+            .map(item => {
+                const price = item.on_sale ? item.sale_price : item.price;
+                return `• ${item.name} (${item.scale}) - ₹${price}`;
+            })
             .join('\n');
         
-        const message = `🛒 <b>NEW ORDER</b>\n\n` +
-            `Order ID: <code>${orderData.orderId}</code>\n` +
-            `Customer: <b>${orderData.name}</b>\n` +
-            `Phone: <b>${orderData.phone}</b>\n` +
-            `Address: ${orderData.address}\n\n` +
-            `<b>Items:</b>\n${itemsList}\n\n` +
-            `<b>Total: ₹${orderData.total}</b>\n` +
-            `Time: ${orderData.orderTime}`;
+        const message = `🛒 <b>NEW ORDER RECEIVED</b>\n\n` +
+            `<b>Order ID:</b> <code>${orderData.orderId}</code>\n` +
+            `<b>Customer Name:</b> ${orderData.name}\n` +
+            `<b>Phone:</b> ${orderData.phone}\n` +
+            `<b>Address:</b> ${orderData.address}\n\n` +
+            `<b>📦 Items:</b>\n${itemsList}\n\n` +
+            `<b>💰 Total Amount: ₹${orderData.total}</b>\n` +
+            `<b>⏰ Order Time:</b> ${orderData.orderTime}`;
         
-        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+        console.log('Sending message...');
+        
+        const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
         
         const response = await fetch(url, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                chat_id: TELEGRAM_CHAT_ID, 
-                text: message, 
-                parse_mode: 'HTML' 
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: message,
+                parse_mode: 'HTML'
             })
         });
         
         const result = await response.json();
         
         if (result.ok) {
-            console.log('✅ Telegram notification sent successfully');
+            console.log('✅ Telegram notification sent successfully!');
+            console.log('Message ID:', result.result.message_id);
             return true;
         } else {
-            console.error('❌ Telegram API error:', result.description);
+            console.error('❌ Telegram API Error:', result.description);
             return false;
         }
         
     } catch (error) {
-        console.error('❌ Telegram fetch error:', error);
+        console.error('❌ Telegram request error:', error);
         return false;
     }
 }
 
-async function sendOrderEmail(orderData) {
+// ========== TEST TELEGRAM CREDENTIALS ==========
+async function testTelegramCredentials() {
+    const botToken = TELEGRAM_BOT_TOKEN;
+    const chatId = TELEGRAM_CHAT_ID;
+    
+    console.log('🔍 Testing Telegram Credentials...');
+    
     try {
-        if (!EMAILJS_PUBLIC_KEY.includes('YOUR_') && typeof emailjs !== 'undefined') {
-            emailjs.init(EMAILJS_PUBLIC_KEY);
-            const itemsList = orderData.items.map(item => `${item.name} (${item.scale}) - ₹${item.on_sale ? item.sale_price : item.price}`).join('\n');
-            
-            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-                to_email: ADMIN_EMAIL,
-                order_id: orderData.orderId,
-                customer_name: orderData.name,
-                customer_phone: orderData.phone,
-                customer_address: orderData.address,
-                items_list: itemsList,
-                total_amount: orderData.total,
-                order_time: orderData.orderTime
-            });
+        console.log('Test 1: Checking bot validity...');
+        const botResponse = await fetch(`https://api.telegram.org/bot${botToken}/getMe`);
+        const botData = await botResponse.json();
+        
+        if (botData.ok) {
+            console.log('✅ Bot Token is VALID');
+            console.log('Bot Name:', botData.result.username);
+        } else {
+            console.error('❌ Bot Token is INVALID:', botData.description);
+            return;
         }
+        
+        console.log('Test 2: Sending test message...');
+        const testMessage = `🧪 Test message from FWFU.in\nTime: ${new Date().toLocaleString()}`;
+        
+        const messageResponse = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: testMessage,
+                parse_mode: 'HTML'
+            })
+        });
+        
+        const messageData = await messageResponse.json();
+        
+        if (messageData.ok) {
+            console.log('✅ Test message SENT successfully');
+            alert('✅ Telegram is working! Check your Telegram for test message.');
+        } else {
+            console.error('❌ Failed to send message:', messageData.description);
+            alert('❌ Error: ' + messageData.description);
+        }
+        
     } catch (error) {
-        console.error('Email error:', error);
+        console.error('❌ Test failed:', error);
+        alert('❌ Network error: ' + error.message);
     }
-    return true;
 }
 
 // ========== ADMIN ==========
