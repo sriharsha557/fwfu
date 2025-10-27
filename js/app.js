@@ -4,8 +4,8 @@ const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzd
 const BUCKET_NAME = 'product-images';
 
 // Telegram
-const TELEGRAM_BOT_TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN_HERE';
-const TELEGRAM_CHAT_ID = 'YOUR_TELEGRAM_CHAT_ID_HERE';
+const TELEGRAM_BOT_TOKEN = '8291385334:AAFJUkSVHfMw2VoXSHJvke1Ho9KEpswlDMw';
+const TELEGRAM_CHAT_ID = '5616171390';
 
 // EmailJS
 const EMAILJS_SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';
@@ -381,24 +381,58 @@ function placeOrder() {
 }
 
 // ========== NOTIFICATIONS ==========
+// ========== FIXED TELEGRAM NOTIFICATION ==========
 async function sendOrderToTelegram(orderData) {
     try {
-        if (!TELEGRAM_BOT_TOKEN.includes('YOUR_')) {
-            const itemsList = orderData.items.map(item => `• ${item.name} (${item.scale}) - ₹${item.on_sale ? item.sale_price : item.price}`).join('\n');
-            const message = `🛍️ <b>NEW ORDER</b>\n\nOrder ID: ${orderData.orderId}\nCustomer: ${orderData.name}\nPhone: ${orderData.phone}\nAddress: ${orderData.address}\n\nItems:\n${itemsList}\n\nTotal: ₹${orderData.total}\nTime: ${orderData.orderTime}`;
-            
-            const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message, parse_mode: 'HTML' })
-            });
-            
-            return response.ok;
+        console.log('📤 Sending to Telegram...');
+        console.log('Bot Token:', TELEGRAM_BOT_TOKEN ? 'Set' : 'Not Set');
+        console.log('Chat ID:', TELEGRAM_CHAT_ID ? 'Set' : 'Not Set');
+        
+        // Check if credentials are properly configured
+        if (TELEGRAM_BOT_TOKEN.includes('YOUR_') || TELEGRAM_CHAT_ID.includes('YOUR_')) {
+            console.warn('⚠️ Telegram credentials not configured');
+            return false;
         }
+        
+        const itemsList = orderData.items
+            .map(item => `• ${item.name} (${item.scale}) - ₹${item.on_sale ? item.sale_price : item.price}`)
+            .join('\n');
+        
+        const message = `🛒 <b>NEW ORDER</b>\n\n` +
+            `Order ID: <code>${orderData.orderId}</code>\n` +
+            `Customer: <b>${orderData.name}</b>\n` +
+            `Phone: <b>${orderData.phone}</b>\n` +
+            `Address: ${orderData.address}\n\n` +
+            `<b>Items:</b>\n${itemsList}\n\n` +
+            `<b>Total: ₹${orderData.total}</b>\n` +
+            `Time: ${orderData.orderTime}`;
+        
+        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                chat_id: TELEGRAM_CHAT_ID, 
+                text: message, 
+                parse_mode: 'HTML' 
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.ok) {
+            console.log('✅ Telegram notification sent successfully');
+            return true;
+        } else {
+            console.error('❌ Telegram API error:', result.description);
+            return false;
+        }
+        
     } catch (error) {
-        console.error('Telegram error:', error);
+        console.error('❌ Telegram fetch error:', error);
+        return false;
     }
-    return true;
 }
 
 async function sendOrderEmail(orderData) {
