@@ -177,6 +177,10 @@ nav a:hover {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .hero::before {
@@ -199,6 +203,9 @@ nav a:hover {
     text-shadow: 2px 4px 20px rgba(0, 0, 0, 0.8);
     letter-spacing: 3px;
     line-height: 1.2;
+    max-width: 90%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .hero p {
@@ -207,6 +214,9 @@ nav a:hover {
     color: #e0e0e0;
     font-weight: 300;
     letter-spacing: 1px;
+    max-width: 90%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .hero button {
@@ -222,12 +232,73 @@ nav a:hover {
     box-shadow: 0 10px 40px rgba(201, 169, 97, 0.3);
     text-transform: uppercase;
     letter-spacing: 2px;
+    white-space: nowrap;
 }
 
 .hero button:hover {
     transform: translateY(-5px);
     box-shadow: 0 15px 50px rgba(201, 169, 97, 0.5);
     background: linear-gradient(135deg, #F4D03F 0%, #C9A961 100%);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Hero */
+@media (max-width: 1024px) {
+    .hero h1 {
+        font-size: 3.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        min-height: 70vh;
+        padding: 2rem;
+    }
+    
+    .hero h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .hero p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    .hero button {
+        padding: 1rem 2rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        min-height: 60vh;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .hero p {
+        font-size: 1rem;
+    }
+
+    .hero button {
+        padding: 0.9rem 1.5rem;
+        font-size: 0.8rem;
+    }
 }
 
 @keyframes fadeInUp {
